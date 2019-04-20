@@ -8,11 +8,10 @@ import java.util.Arrays;
 final class LevelState {
 
     private final @NotNull Level level;
-
-    private int previousNumberOfUnprocessedElements;
-    private final byte[] previousRoads;
-    private final byte[] previousPickMap;
-    private final byte[] previousUnloadMap;
+    private final int previousNumberOfUnprocessedElements;
+    private final @NotNull byte[] previousRoads;
+    private final @NotNull byte[] previousPickMap;
+    private final @NotNull byte[] previousUnloadMap;
     private final @NotNull Truck[] currentTrucks;
 
     private static final boolean LOG = "true".equals(System.getenv("LOG"));
@@ -20,9 +19,9 @@ final class LevelState {
     LevelState(
             final @NotNull Level level,
             final int previousNumberOfUnprocessedElements,
-            final byte[] previousRoads,
-            final byte[] previousPickMap,
-            final byte[] previousUnloadMap,
+            final @NotNull byte[] previousRoads,
+            final @NotNull byte[] previousPickMap,
+            final @NotNull byte[] previousUnloadMap,
             final @NotNull Truck[] currentTrucks) {
         this.level = level;
         this.previousNumberOfUnprocessedElements = previousNumberOfUnprocessedElements;

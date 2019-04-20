@@ -12,6 +12,7 @@ final class LevelState {
     private int previousNumberOfUnprocessedElements;
     private final byte[] previousRoads;
     private final byte[] previousPickMap;
+    private final byte[] previousUnloadMap;
     private final @NotNull Truck[] currentTrucks;
 
     private static final boolean LOG = "true".equals(System.getenv("LOG"));
@@ -21,10 +22,12 @@ final class LevelState {
             final int previousNumberOfUnprocessedElements,
             final byte[] previousRoads,
             final byte[] previousPickMap,
+            final byte[] previousUnloadMap,
             final @NotNull Truck[] currentTrucks) {
         this.level = level;
         this.previousNumberOfUnprocessedElements = previousNumberOfUnprocessedElements;
         this.previousRoads = previousRoads;
+        this.previousUnloadMap = previousUnloadMap;
         this.previousPickMap = previousPickMap;
         this.currentTrucks = currentTrucks;
     }
@@ -41,6 +44,7 @@ final class LevelState {
                 previousNumberOfUnprocessedElements,
                 previousRoads,
                 previousPickMap,
+                previousUnloadMap,
                 false
         );
     }
@@ -51,6 +55,7 @@ final class LevelState {
             final int nextNumberOfUnprocessedElements,
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
+            final @NotNull byte[] nextUnloadMap,
             final boolean anyTruckDriving) {
         Truck currentTruck = currentTrucks[truckIndex];
         if (currentTruck.status == Truck.STATUS_STOPPED) {
@@ -60,6 +65,7 @@ final class LevelState {
                     nextTrucks,
                     nextRoads,
                     nextPickMap,
+                    nextUnloadMap,
                     nextNumberOfUnprocessedElements,
                     anyTruckDriving);
         } else {
@@ -69,6 +75,7 @@ final class LevelState {
                     nextTrucks,
                     nextRoads,
                     nextPickMap,
+                    nextUnloadMap,
                     nextNumberOfUnprocessedElements,
                     anyTruckDriving);
         }
@@ -80,6 +87,7 @@ final class LevelState {
             final @NotNull Truck[] nextTrucks,
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
+            final @NotNull byte[] nextUnloadMap,
             final int nextNumberOfUnprocessedElements,
             final boolean anyTruckDriving) {
         // try to go up
@@ -90,6 +98,7 @@ final class LevelState {
                 nextNumberOfUnprocessedElements,
                 nextRoads,
                 nextPickMap,
+                nextUnloadMap,
                 Direction.UP,
                 -level.width
         );
@@ -104,6 +113,7 @@ final class LevelState {
                 nextNumberOfUnprocessedElements,
                 nextRoads,
                 nextPickMap,
+                nextUnloadMap,
                 Direction.DOWN,
                 level.width
         );
@@ -118,6 +128,7 @@ final class LevelState {
                 nextNumberOfUnprocessedElements,
                 nextRoads,
                 nextPickMap,
+                nextUnloadMap,
                 Direction.LEFT,
                 -1
         );
@@ -132,6 +143,7 @@ final class LevelState {
                 nextNumberOfUnprocessedElements,
                 nextRoads,
                 nextPickMap,
+                nextUnloadMap,
                 Direction.RIGHT,
                 +1
         );
@@ -146,6 +158,7 @@ final class LevelState {
                 nextTrucks,
                 nextRoads,
                 nextPickMap,
+                nextUnloadMap,
                 anyTruckDriving
         );
         return result;
@@ -158,6 +171,7 @@ final class LevelState {
             final @NotNull Truck[] nextTrucks,
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
+            final @NotNull byte[] nextUnloadMap,
             final boolean anyTruckDriving) {
         if (
                 (!anyTruckHere(nextTrucks, currentTruck.currentPosition)) &&
@@ -176,6 +190,7 @@ final class LevelState {
                     nextTrucks,
                     nextRoads,
                     nextPickMap,
+                    nextUnloadMap,
                     anyTruckDriving
             );
         } else {
@@ -190,6 +205,7 @@ final class LevelState {
             final int nextNumberOfUnprocessedElements,
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
+            final @NotNull byte[] nextUnloadMap,
             final int direction,
             final int deltaPosition) {
         int currentPosition = currentTruck.currentPosition;
@@ -224,11 +240,12 @@ final class LevelState {
 
         int nextNextNumberOfUnprocessedElements = nextNumberOfUnprocessedElements;
         byte[] nextNextPickMap = nextPickMap;
+        byte[] nextNextUnloadMap = nextUnloadMap;
 
-        byte canDump = level.dumpMap[targetPosition];
-        if (canDump != MapElement.EMPTY) {
+        byte canUnload = nextNextUnloadMap[targetPosition];
+        if (canUnload != MapElement.EMPTY) {
             if (newTruck.cargo == null) {
-                // no cargo on a space we should dump one => stop
+                // no cargo on a space we should unload one => stop
                 if (LOG) {
                     System.out.println("Can't go there because we should unload a cargo and we don't have any");
                 }
@@ -236,7 +253,7 @@ final class LevelState {
             }
 
             byte cargo = newTruck.cargo.element;
-            if (cargo != canDump) {
+            if (cargo != canUnload) {
                 // cargo of the wrong type => stop
                 if (LOG) {
                     System.out.println("Can't go there because we should unload a cargo of another type");
@@ -247,6 +264,8 @@ final class LevelState {
             if (LOG) {
                 System.out.println("Unload a cargo");
             }
+            nextNextUnloadMap = Arrays.copyOf(nextNextUnloadMap, nextNextUnloadMap.length);
+            nextNextUnloadMap[targetPosition] = MapElement.EMPTY;
             newTruck.cargo = newTruck.cargo.previous;
             nextNextNumberOfUnprocessedElements--;
 
@@ -300,6 +319,7 @@ final class LevelState {
                 nextTrucks,
                 nextNextRoads,
                 nextNextPickMap,
+                nextNextUnloadMap,
                 true
         );
     }
@@ -310,6 +330,7 @@ final class LevelState {
             final @NotNull Truck[] nextTrucks,
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
+            final @NotNull byte[] nextUnloadMap,
             final int nextNumberOfUnprocessedElements,
             final boolean anyTruckDriving) {
         // already stopped, going on
@@ -325,6 +346,7 @@ final class LevelState {
                 nextTrucks,
                 nextRoads,
                 nextPickMap,
+                nextUnloadMap,
                 anyTruckDriving
         );
     }
@@ -336,6 +358,7 @@ final class LevelState {
             final @NotNull Truck[] nextTrucks,
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
+            final @NotNull byte[] nextUnloadMap,
             final boolean anyTruckDriving) {
         // Add truck to list
         Truck[] nextNextTrucks = Arrays.copyOf(nextTrucks, truckIndex + 1);
@@ -349,6 +372,7 @@ final class LevelState {
                         nextNumberOfUnprocessedElements,
                         nextRoads,
                         nextPickMap,
+                        nextUnloadMap,
                         nextNextTrucks
                 ));
             }
@@ -361,6 +385,7 @@ final class LevelState {
                     nextNumberOfUnprocessedElements,
                     nextRoads,
                     nextPickMap,
+                    nextUnloadMap,
                     anyTruckDriving
             );
         }

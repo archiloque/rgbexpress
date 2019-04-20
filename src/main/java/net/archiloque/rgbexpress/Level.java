@@ -22,10 +22,10 @@ final class Level {
     private final byte[] elements;
 
     @NotNull
-    final byte[] dumpMap;
+    final byte[] pickMap;
 
     @NotNull
-    final byte[] pickMap;
+    final byte[] unloadMap;
 
     @NotNull
     private final List<LevelTruck> levelTrucks = new ArrayList<>();
@@ -42,8 +42,8 @@ final class Level {
 
         int packages = 0;
         int warehouses = 0;
-        dumpMap = new byte[width * height];
-        Arrays.fill(dumpMap, MapElement.EMPTY);
+        unloadMap = new byte[width * height];
+        Arrays.fill(unloadMap, MapElement.EMPTY);
         pickMap = new byte[width * height];
         Arrays.fill(pickMap, MapElement.EMPTY);
 
@@ -58,7 +58,7 @@ final class Level {
                 packages += 1;
             } else if (Arrays.binarySearch(MapElement.WAREHOUSES, currentElement) >= 0) {
                 isReachable(position + width);
-                dumpMap[position + width] = MapElement.WAREHOUSE_TO_PACKAGES.get(currentElement);
+                unloadMap[position + width] = MapElement.WAREHOUSE_TO_PACKAGES.get(currentElement);
                 warehouses += 1;
             }
         }
@@ -90,6 +90,7 @@ final class Level {
                 packagesToPick,
                 roads,
                 pickMap,
+                unloadMap,
                 trucks);
         return levelState;
     }

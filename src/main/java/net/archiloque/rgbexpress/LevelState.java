@@ -251,6 +251,7 @@ final class LevelState {
                 return null;
             }
 
+            // get the last cargo
             byte cargo = newTruck.cargo.element;
             if (cargo != canUnload) {
                 // cargo of the wrong type => stop

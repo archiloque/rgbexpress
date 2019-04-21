@@ -27,6 +27,8 @@ final class MapElement {
     static final char YELLOW_PACKAGE_CHAR = 'y';
     static final char YELLOW_WAREHOUSE_CHAR = 'Y';
 
+    static final char WHITE_TRUCK_CHAR = 'ᴡ';
+
     static final byte EMPTY = 0;
 
     static final byte RED_TRUCK = EMPTY + 1;
@@ -44,6 +46,8 @@ final class MapElement {
     static final byte YELLOW_TRUCK = BLUE_WAREHOUSE + 1;
     static final byte YELLOW_PACKAGE = YELLOW_TRUCK + 1;
     static final byte YELLOW_WAREHOUSE = YELLOW_PACKAGE + 1;
+
+    static final byte WHITE_TRUCK = YELLOW_WAREHOUSE + 1;
 
     static final char[] ALL_ELEMENTS = new char[]{
             EMPTY_CHAR,
@@ -63,6 +67,8 @@ final class MapElement {
             YELLOW_TRUCK_CHAR,
             YELLOW_PACKAGE_CHAR,
             YELLOW_WAREHOUSE_CHAR,
+
+            WHITE_TRUCK_CHAR,
     };
 
     static final Map<Character, Byte> CHAR_TO_BYTE = new HashMap<>(ALL_ELEMENTS.length);
@@ -72,6 +78,7 @@ final class MapElement {
             GREEN_TRUCK,
             BLUE_TRUCK,
             YELLOW_TRUCK,
+            WHITE_TRUCK,
     };
 
     static final byte[] PACKAGES = new byte[]{
@@ -109,12 +116,21 @@ final class MapElement {
 
         CAN_PICK[RED_TRUCK] = new boolean[ALL_ELEMENTS.length];
         CAN_PICK[RED_TRUCK][RED_PACKAGE] = true;
+
         CAN_PICK[BLUE_TRUCK] = new boolean[ALL_ELEMENTS.length];
         CAN_PICK[BLUE_TRUCK][BLUE_PACKAGE] = true;
+
         CAN_PICK[GREEN_TRUCK] = new boolean[ALL_ELEMENTS.length];
         CAN_PICK[GREEN_TRUCK][GREEN_PACKAGE] = true;
+
         CAN_PICK[YELLOW_TRUCK] = new boolean[ALL_ELEMENTS.length];
         CAN_PICK[YELLOW_TRUCK][YELLOW_PACKAGE] = true;
+
+        CAN_PICK[WHITE_TRUCK] = new boolean[ALL_ELEMENTS.length];
+        CAN_PICK[WHITE_TRUCK][RED_PACKAGE] = true;
+        CAN_PICK[WHITE_TRUCK][BLUE_PACKAGE] = true;
+        CAN_PICK[WHITE_TRUCK][GREEN_PACKAGE] = true;
+        CAN_PICK[WHITE_TRUCK][YELLOW_PACKAGE] = true;
     }
 
 }

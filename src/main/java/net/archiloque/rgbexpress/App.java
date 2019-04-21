@@ -103,7 +103,7 @@ public final class App {
                     currentText.append("Start at ").append(currentText);
                 } else {
                     char direction = getDirection(level, previousPosition, currentPosition);
-                    currentText.append(direction).append(" ").append(currentText);
+                    currentText.append(direction).append(" ");
                 }
                 currentText.append("(").append(currentLine).append(",").append(currentColumn).append(")");
 

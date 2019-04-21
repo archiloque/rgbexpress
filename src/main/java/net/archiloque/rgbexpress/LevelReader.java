@@ -38,15 +38,15 @@ final class LevelReader {
                 int position = (lineIndex * width) + columnIndex;
 
                 char roadChar = roadsLine.charAt(columnIndex);
-                checkIfIn(roadChar, RoadElement.ALL_ELEMENTS);
+                checkIfIn(roadChar, RoadElement.ELEMENTS_IN_MAP);
                 roads[position] = RoadElement.CHAR_TO_BYTE.get(roadChar);
 
                 char elementChar = elementsLine.charAt(columnIndex);
-                if (Arrays.binarySearch(MapElement.ALL_ELEMENTS, elementChar) >= 0) {
+                if (Arrays.binarySearch(MapElement.ELEMENTS_IN_MAP, elementChar) >= 0) {
                     elements[position] = MapElement.CHAR_TO_BYTE.get(elementChar);
-                    ;
+
                 } else {
-                    checkIfIn(elementChar, RoadElement.ALL_ELEMENTS);
+                    checkIfIn(elementChar, RoadElement.ELEMENTS_IN_MAP);
                 }
             }
         }

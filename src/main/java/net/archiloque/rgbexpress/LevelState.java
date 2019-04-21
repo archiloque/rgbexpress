@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 final class LevelState {
 
@@ -44,6 +46,7 @@ final class LevelState {
                 previousRoads,
                 previousPickMap,
                 previousUnloadMap,
+                null,
                 false
         );
     }
@@ -55,7 +58,9 @@ final class LevelState {
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
-            final boolean anyTruckDriving) {
+            final @Nullable IntegerListElement forbiddenLocations,
+            final boolean anyTruckDriving
+    ) {
         Truck currentTruck = currentTrucks[truckIndex];
         if (currentTruck.status == Truck.STATUS_STOPPED) {
             return processStoppedTruck(
@@ -65,6 +70,7 @@ final class LevelState {
                     nextRoads,
                     nextPickMap,
                     nextUnloadMap,
+                    forbiddenLocations,
                     nextNumberOfUnprocessedElements,
                     anyTruckDriving);
         } else {
@@ -75,6 +81,7 @@ final class LevelState {
                     nextRoads,
                     nextPickMap,
                     nextUnloadMap,
+                    forbiddenLocations,
                     nextNumberOfUnprocessedElements,
                     anyTruckDriving);
         }
@@ -87,6 +94,7 @@ final class LevelState {
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @Nullable IntegerListElement forbiddenLocations,
             final int nextNumberOfUnprocessedElements,
             final boolean anyTruckDriving) {
         // try to go up
@@ -98,6 +106,7 @@ final class LevelState {
                 nextRoads,
                 nextPickMap,
                 nextUnloadMap,
+                forbiddenLocations,
                 Direction.UP,
                 -level.width
         );
@@ -113,6 +122,7 @@ final class LevelState {
                 nextRoads,
                 nextPickMap,
                 nextUnloadMap,
+                forbiddenLocations,
                 Direction.DOWN,
                 level.width
         );
@@ -128,6 +138,7 @@ final class LevelState {
                 nextRoads,
                 nextPickMap,
                 nextUnloadMap,
+                forbiddenLocations,
                 Direction.LEFT,
                 -1
         );
@@ -143,6 +154,7 @@ final class LevelState {
                 nextRoads,
                 nextPickMap,
                 nextUnloadMap,
+                forbiddenLocations,
                 Direction.RIGHT,
                 +1
         );
@@ -158,6 +170,7 @@ final class LevelState {
                 nextRoads,
                 nextPickMap,
                 nextUnloadMap,
+                forbiddenLocations,
                 anyTruckDriving
         );
         return result;
@@ -171,6 +184,7 @@ final class LevelState {
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @Nullable IntegerListElement forbiddenLocations,
             final boolean anyTruckDriving) {
         if (
                 (!anyTruckHere(nextTrucks, currentTruck.currentPosition)) &&
@@ -190,6 +204,7 @@ final class LevelState {
                     nextRoads,
                     nextPickMap,
                     nextUnloadMap,
+                    forbiddenLocations,
                     anyTruckDriving
             );
         } else {
@@ -205,6 +220,7 @@ final class LevelState {
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @Nullable IntegerListElement forbiddenLocations,
             final int direction,
             final int deltaPosition) {
         int currentPosition = currentTruck.currentPosition;
@@ -229,7 +245,7 @@ final class LevelState {
             return null;
         }
 
-        Truck newTruck = new Truck(
+        @NotNull Truck newTruck = new Truck(
                 targetPosition,
                 currentTruck.type,
                 Truck.STATUS_DRIVING,
@@ -238,8 +254,8 @@ final class LevelState {
         );
 
         int nextNextNumberOfUnprocessedElements = nextNumberOfUnprocessedElements;
-        byte[] nextNextPickMap = nextPickMap;
-        byte[] nextNextUnloadMap = nextUnloadMap;
+        @NotNull byte[] nextNextPickMap = nextPickMap;
+        @NotNull byte[] nextNextUnloadMap = nextUnloadMap;
 
         byte canUnload = nextNextUnloadMap[targetPosition];
         if (canUnload != MapElement.EMPTY) {
@@ -273,6 +289,12 @@ final class LevelState {
                 // we found a solution !
                 Truck[] nextNextTrucks = Arrays.copyOf(nextTrucks, currentTrucks.length);
                 nextNextTrucks[truckIndex] = newTruck;
+                if (!checkForbiddenLocations(nextNextTrucks, forbiddenLocations)) {
+                    if (LOG) {
+                        System.out.println("A truck is on a forbidden location");
+                    }
+                    return null;
+                }
                 if (currentTrucks.length != truckIndex)
                     System.arraycopy(
                             currentTrucks,
@@ -287,13 +309,13 @@ final class LevelState {
         } else {
             byte canPick = nextNextPickMap[targetPosition];
             if (canPick != MapElement.EMPTY) {
-                if (! MapElement.CAN_PICK[newTruck.type][canPick]) {
+                if (!MapElement.CAN_PICK[newTruck.type][canPick]) {
                     // cargo of the wrong type => stop
                     if (LOG) {
                         System.out.println("Can't go there because we can't pick a cargo");
                     }
                     return null;
-                } else if((newTruck.cargo != null) && (newTruck.cargo.size == 3)) {
+                } else if ((newTruck.cargo != null) && (newTruck.cargo.size == 3)) {
                     // enough cargo already => stop
                     if (LOG) {
                         System.out.println("Can't go there because we already have enough cargo");
@@ -310,22 +332,56 @@ final class LevelState {
                 }
             }
         }
+
+        byte targetRoad = nextRoads[targetPosition];
+        if (RoadElement.BLOCKED_ROAD[targetRoad]) {
+            if (LOG) {
+                System.out.println("Road ahead is blocked");
+            }
+            return null;
+        }
+
         if (LOG) {
             System.out.println("We can go there");
         }
 
-        byte[] nextNextRoads = Arrays.copyOf(nextRoads, nextRoads.length);
-        nextNextRoads[currentPosition] = RoadElement.REMOVE_DIRECTION[direction][currentRoad];
+        @NotNull byte[] nextNextRoads = Arrays.copyOf(nextRoads, nextRoads.length);
+        byte removedDirection = RoadElement.REMOVE_DIRECTION[direction][currentRoad];
+        if (removedDirection == RoadElement.ERROR) {
+            throw new IllegalArgumentException("Woops !");
+        }
+        nextNextRoads[currentPosition] = removedDirection;
         int oppositeDirection = Direction.OPPOSITE[direction];
-        byte targetRoad = nextRoads[targetPosition];
-        nextNextRoads[targetPosition] = RoadElement.REMOVE_DIRECTION[oppositeDirection][targetRoad];
+        removedDirection = RoadElement.REMOVE_DIRECTION[oppositeDirection][targetRoad];
+        if (removedDirection == RoadElement.ERROR) {
+            throw new IllegalArgumentException("Woops !");
+        }
+        nextNextRoads[targetPosition] = removedDirection;
+
+        IntegerListElement nexForbiddenLocations = forbiddenLocations;
+
+        @Nullable int[] roadsToSwitchPositions = level.switchMap[targetPosition];
+        if (roadsToSwitchPositions != null) {
+            if (LOG) {
+                System.out.println("On a switch");
+            }
+            for (int roadToSwitchPosition : roadsToSwitchPositions) {
+                nexForbiddenLocations = new IntegerListElement(roadToSwitchPosition, nexForbiddenLocations);
+                int currentRoadAtPosition = nextNextRoads[roadToSwitchPosition];
+                byte switchedRoad = RoadElement.SWITCHED_ELEMENT[currentRoadAtPosition];
+                nextNextRoads[roadToSwitchPosition] = switchedRoad;
+            }
+        }
+
         return endProcessTruck(
                 truckIndex,
-                nextNextNumberOfUnprocessedElements, newTruck,
+                nextNextNumberOfUnprocessedElements,
+                newTruck,
                 nextTrucks,
                 nextNextRoads,
                 nextNextPickMap,
                 nextNextUnloadMap,
+                nexForbiddenLocations,
                 true
         );
     }
@@ -337,6 +393,7 @@ final class LevelState {
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @Nullable IntegerListElement forbiddenLocations,
             final int nextNumberOfUnprocessedElements,
             final boolean anyTruckDriving) {
         // already stopped, going on
@@ -353,6 +410,7 @@ final class LevelState {
                 nextRoads,
                 nextPickMap,
                 nextUnloadMap,
+                forbiddenLocations,
                 anyTruckDriving
         );
     }
@@ -365,6 +423,7 @@ final class LevelState {
             final @NotNull byte[] nextRoads,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @Nullable IntegerListElement forbiddenLocations,
             final boolean anyTruckDriving) {
         // Add truck to list
         Truck[] nextNextTrucks = Arrays.copyOf(nextTrucks, truckIndex + 1);
@@ -372,15 +431,19 @@ final class LevelState {
 
         if (truckIndex == currentTrucks.length - 1) {
             // last truck
-            if (anyTruckDriving) {
-                level.states.add(new LevelState(
-                        level,
-                        nextNumberOfUnprocessedElements,
-                        nextRoads,
-                        nextPickMap,
-                        nextUnloadMap,
-                        nextNextTrucks
-                ));
+            if (!anyTruckDriving) {
+                return null;
+            } else {
+                if (checkForbiddenLocations(nextTrucks, forbiddenLocations)) {
+                    level.states.add(new LevelState(
+                            level,
+                            nextNumberOfUnprocessedElements,
+                            nextRoads,
+                            nextPickMap,
+                            nextUnloadMap,
+                            nextNextTrucks
+                    ));
+                }
             }
             return null;
         } else {
@@ -392,8 +455,8 @@ final class LevelState {
                     nextRoads,
                     nextPickMap,
                     nextUnloadMap,
-                    anyTruckDriving
-            );
+                    forbiddenLocations,
+                    anyTruckDriving);
         }
     }
 
@@ -405,5 +468,27 @@ final class LevelState {
         }
         return false;
     }
+
+    private boolean checkForbiddenLocations(
+            @NotNull final Truck[] trucks,
+            @Nullable final IntegerListElement forbiddenLocations) {
+        if (forbiddenLocations == null) {
+            return true;
+        } else {
+            Map<Integer, Integer> forbiddenLocationsMap = new HashMap<>();
+            IntegerListElement currentLocation = forbiddenLocations;
+            while (currentLocation != null) {
+                forbiddenLocationsMap.put(currentLocation.element, currentLocation.element);
+                currentLocation = currentLocation.previous;
+            }
+            for (Truck truck : trucks) {
+                if (forbiddenLocationsMap.containsKey(truck.currentPosition)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
 
 }

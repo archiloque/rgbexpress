@@ -29,6 +29,18 @@ final class MapElement {
 
     static final char WHITE_TRUCK_CHAR = 'ᴡ';
 
+    static final char SWITCH_1_BUTTON_CHAR = 'ᴜ';
+    static final char SWITCH_1_ROAD_OPEN_CHAR = 'u';
+    static final char SWITCH_1_ROAD_CLOSED_CHAR = 'U';
+
+    static final char SWITCH_2_BUTTON_CHAR = 'ᴠ';
+    static final char SWITCH_2_ROAD_OPEN_CHAR = 'v';
+    static final char SWITCH_2_ROAD_CLOSED_CHAR = 'V';
+
+    static final char SWITCH_3_BUTTON_CHAR = 'ᴢ';
+    static final char SWITCH_3_ROAD_OPEN_CHAR = 'z';
+    static final char SWITCH_3_ROAD_CLOSED_CHAR = 'Z';
+
     static final byte EMPTY = 0;
 
     static final byte RED_TRUCK = EMPTY + 1;
@@ -49,7 +61,21 @@ final class MapElement {
 
     static final byte WHITE_TRUCK = YELLOW_WAREHOUSE + 1;
 
-    static final char[] ALL_ELEMENTS = new char[]{
+    static final byte SWITCH_1_BUTTON = WHITE_TRUCK + 1;
+    static final byte SWITCH_1_ROAD_OPEN = SWITCH_1_BUTTON + 1;
+    static final byte SWITCH_1_ROAD_CLOSED = SWITCH_1_ROAD_OPEN + 1;
+
+    static final byte SWITCH_2_BUTTON = SWITCH_1_ROAD_CLOSED + 1;
+    static final byte SWITCH_2_ROAD_OPEN = SWITCH_2_BUTTON + 1;
+    static final byte SWITCH_2_ROAD_CLOSED = SWITCH_2_ROAD_OPEN + 1;
+
+    static final byte SWITCH_3_BUTTON = SWITCH_2_ROAD_CLOSED + 1;
+    static final byte SWITCH_3_ROAD_OPEN = SWITCH_3_BUTTON + 1;
+    static final byte SWITCH_3_ROAD_CLOSED = SWITCH_3_ROAD_OPEN + 1;
+
+    static final int NUMBER_OF_SWITCH_TYPES = 3;
+
+    static final char[] ELEMENTS_IN_MAP = new char[]{
             EMPTY_CHAR,
 
             RED_TRUCK_CHAR,
@@ -69,9 +95,21 @@ final class MapElement {
             YELLOW_WAREHOUSE_CHAR,
 
             WHITE_TRUCK_CHAR,
+
+            SWITCH_1_BUTTON_CHAR,
+            SWITCH_1_ROAD_OPEN_CHAR,
+            SWITCH_1_ROAD_CLOSED_CHAR,
+
+            SWITCH_2_BUTTON_CHAR,
+            SWITCH_2_ROAD_OPEN_CHAR,
+            SWITCH_2_ROAD_CLOSED_CHAR,
+
+            SWITCH_3_BUTTON_CHAR,
+            SWITCH_3_ROAD_OPEN_CHAR,
+            SWITCH_3_ROAD_CLOSED_CHAR,
     };
 
-    static final Map<Character, Byte> CHAR_TO_BYTE = new HashMap<>(ALL_ELEMENTS.length);
+    static final Map<Character, Byte> CHAR_TO_BYTE = new HashMap<>(ELEMENTS_IN_MAP.length);
 
     static final byte[] TRUCKS = new byte[]{
             RED_TRUCK,
@@ -95,12 +133,30 @@ final class MapElement {
             YELLOW_WAREHOUSE,
     };
 
+    static final byte[] SWITCHES_BUTTONS = new byte[]{
+            SWITCH_1_BUTTON,
+            SWITCH_2_BUTTON,
+            SWITCH_3_BUTTON,
+    };
+
+    static final byte[] SWITCHES_ROAD_OPEN = new byte[]{
+            SWITCH_1_ROAD_OPEN,
+            SWITCH_2_ROAD_OPEN,
+            SWITCH_3_ROAD_OPEN,
+    };
+
+    static final byte[] SWITCHES_ROAD_CLOSED = new byte[]{
+            SWITCH_1_ROAD_CLOSED,
+            SWITCH_2_ROAD_CLOSED,
+            SWITCH_3_ROAD_CLOSED,
+    };
+
     static final Map<Byte, Byte> WAREHOUSE_TO_PACKAGES = new HashMap<>(WAREHOUSES.length);
-    static final boolean[][] CAN_PICK = new boolean[ALL_ELEMENTS.length][];
+    static final boolean[][] CAN_PICK = new boolean[ELEMENTS_IN_MAP.length][];
 
     static {
-        for (byte i = 0; i < ALL_ELEMENTS.length; i++) {
-            char c = ALL_ELEMENTS[i];
+        for (byte i = 0; i < ELEMENTS_IN_MAP.length; i++) {
+            char c = ELEMENTS_IN_MAP[i];
             CHAR_TO_BYTE.put(c, i);
         }
 
@@ -109,24 +165,24 @@ final class MapElement {
         WAREHOUSE_TO_PACKAGES.put(GREEN_WAREHOUSE, GREEN_PACKAGE);
         WAREHOUSE_TO_PACKAGES.put(YELLOW_WAREHOUSE, YELLOW_PACKAGE);
 
-        Arrays.sort(ALL_ELEMENTS);
+        Arrays.sort(ELEMENTS_IN_MAP);
         Arrays.sort(TRUCKS);
         Arrays.sort(PACKAGES);
         Arrays.sort(WAREHOUSES);
 
-        CAN_PICK[RED_TRUCK] = new boolean[ALL_ELEMENTS.length];
+        CAN_PICK[RED_TRUCK] = new boolean[ELEMENTS_IN_MAP.length];
         CAN_PICK[RED_TRUCK][RED_PACKAGE] = true;
 
-        CAN_PICK[BLUE_TRUCK] = new boolean[ALL_ELEMENTS.length];
+        CAN_PICK[BLUE_TRUCK] = new boolean[ELEMENTS_IN_MAP.length];
         CAN_PICK[BLUE_TRUCK][BLUE_PACKAGE] = true;
 
-        CAN_PICK[GREEN_TRUCK] = new boolean[ALL_ELEMENTS.length];
+        CAN_PICK[GREEN_TRUCK] = new boolean[ELEMENTS_IN_MAP.length];
         CAN_PICK[GREEN_TRUCK][GREEN_PACKAGE] = true;
 
-        CAN_PICK[YELLOW_TRUCK] = new boolean[ALL_ELEMENTS.length];
+        CAN_PICK[YELLOW_TRUCK] = new boolean[ELEMENTS_IN_MAP.length];
         CAN_PICK[YELLOW_TRUCK][YELLOW_PACKAGE] = true;
 
-        CAN_PICK[WHITE_TRUCK] = new boolean[ALL_ELEMENTS.length];
+        CAN_PICK[WHITE_TRUCK] = new boolean[ELEMENTS_IN_MAP.length];
         CAN_PICK[WHITE_TRUCK][RED_PACKAGE] = true;
         CAN_PICK[WHITE_TRUCK][BLUE_PACKAGE] = true;
         CAN_PICK[WHITE_TRUCK][GREEN_PACKAGE] = true;

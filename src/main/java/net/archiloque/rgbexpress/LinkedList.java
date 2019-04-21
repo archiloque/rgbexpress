@@ -11,7 +11,7 @@ final class LinkedList<E> {
     }
 
     void add(@NotNull E element) {
-            current = new ListElement<>(element, current);
+        current = new ListElement<>(element, current);
     }
 
     @Nullable E pop() {

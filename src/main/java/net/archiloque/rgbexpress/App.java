@@ -81,7 +81,7 @@ public final class App {
                 }
                 previousPosition = currentPosition;
             }
-            int firstLine = moves.get(0)/ level.width;
+            int firstLine = moves.get(0) / level.width;
             int firstColumn = moves.get(0) % level.width;
             map[firstLine][firstColumn] = '□';
 
@@ -111,6 +111,8 @@ public final class App {
                     currentText.append(" maybe pick");
                 } else if (level.unloadMap[currentPosition] != MapElement.EMPTY) {
                     currentText.append(" unload");
+                } else if (level.switchMap[currentPosition] != null) {
+                    currentText.append(" switch");
                 }
                 previousPosition = currentPosition;
                 content.add(currentText.toString());

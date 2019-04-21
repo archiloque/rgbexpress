@@ -286,7 +286,19 @@ final class LevelState {
         } else {
             byte canPick = nextNextPickMap[targetPosition];
             if (canPick != MapElement.EMPTY) {
-                if (MapElement.CAN_PICK[newTruck.type][canPick]) {
+                if (! MapElement.CAN_PICK[newTruck.type][canPick]) {
+                    // cargo of the wrong type => stop
+                    if (LOG) {
+                        System.out.println("Can't go there because we can't pick a cargo");
+                    }
+                    return null;
+                } else if((newTruck.cargo != null) && (newTruck.cargo.size == 3)) {
+                    // enough cargo already => stop
+                    if (LOG) {
+                        System.out.println("Can't go there because we already have enough cargo");
+                    }
+                    return null;
+                } else {
                     // pick the content since it OK
                     nextNextPickMap = Arrays.copyOf(nextNextPickMap, nextNextPickMap.length);
                     nextNextPickMap[targetPosition] = MapElement.EMPTY;
@@ -294,12 +306,6 @@ final class LevelState {
                     if (LOG) {
                         System.out.println("Load a cargo");
                     }
-                } else {
-                    // cargo of the wrong type => stop
-                    if (LOG) {
-                        System.out.println("Can't go there because we can't pick a cargo");
-                    }
-                    return null;
                 }
             }
         }

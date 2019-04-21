@@ -10,10 +10,8 @@ final class LinkedList<E> {
     LinkedList() {
     }
 
-    void add(@Nullable E element) {
-        if (element != null) {
-            current = new ListElement<E>(element, current);
-        }
+    void add(@NotNull E element) {
+            current = new ListElement<>(element, current);
     }
 
     @Nullable E pop() {

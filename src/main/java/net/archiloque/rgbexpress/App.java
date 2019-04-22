@@ -100,7 +100,7 @@ public final class App {
                 int currentColumn = currentPosition % level.width;
                 StringBuilder currentText = new StringBuilder();
                 if (previousPosition == -1) {
-                    currentText.append("Start at ").append(currentText);
+                    currentText.append("Start at ");
                 } else {
                     char direction = getDirection(level, previousPosition, currentPosition);
                     currentText.append(direction).append(" ");

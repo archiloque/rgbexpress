@@ -6,7 +6,7 @@
  ↑       │ 
  □       ╵ 
 
-Start at Start at (6,1)
+Start at (6,1)
 ↑ (5,1)
 ↑ (4,1)
 → (4,2)
@@ -42,7 +42,7 @@ Start at Start at (6,1)
  │       ↑ 
  ╵       □ 
 
-Start at Start at (6,9)
+Start at (6,9)
 ↑ (5,9)
 ↑ (4,9) maybe pick
 ← (4,8)

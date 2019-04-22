@@ -7,7 +7,7 @@
   ↑ │ │ ↓  
   ↑←←←←←←  
 
-Start at Start at (5,0)
+Start at (5,0)
 → (5,1)
 → (5,2)
 ↑ (4,2)
@@ -41,7 +41,7 @@ Start at Start at (5,0)
   │ │ │ │  
   └─┴─┴─┘  
 
-Start at Start at (5,10)
+Start at (5,10)
 ← (5,9)
 ← (5,8)
 ← (5,7) maybe pick

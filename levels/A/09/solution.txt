@@ -9,7 +9,7 @@ X     ╷
 →→↑─┴─┤
 □     ╵
 
-Start at Start at (9,0)
+Start at (9,0)
 ↑ (8,0)
 → (8,1)
 → (8,2)
@@ -44,7 +44,7 @@ Start at Start at (9,0)
 ├─┴─↑←←
 ╵     □
 
-Start at Start at (9,6)
+Start at (9,6)
 ↑ (8,6)
 ← (8,5)
 ← (8,4)

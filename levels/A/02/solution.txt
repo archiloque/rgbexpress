@@ -7,7 +7,7 @@
         ↑
 □→→→→→→→↑
 
-Start at Start at (7,0)
+Start at (7,0)
 → (7,1)
 → (7,2) maybe pick
 → (7,3)

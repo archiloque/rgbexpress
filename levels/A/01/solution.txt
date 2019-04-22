@@ -1,7 +1,7 @@
          
 □→→→→→→→X
 
-Start at Start at (1,0)
+Start at (1,0)
 → (1,1)
 → (1,2)
 → (1,3)

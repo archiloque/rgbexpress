@@ -10,7 +10,7 @@
 │ │  │  │ │
 └─┴──┴──┴─┘
 
-Start at Start at (4,5)
+Start at (4,5)
 ← (4,4)
 ← (4,3)
 ← (4,2)
@@ -42,7 +42,7 @@ Start at Start at (4,5)
 ↓ │  │  │ ↑
 →→→→→→→→→→↑
 
-Start at Start at (7,0)
+Start at (7,0)
 ↓ (8,0)
 ↓ (9,0)
 ↓ (10,0)
@@ -82,7 +82,7 @@ Start at Start at (7,0)
 │ │  │  │ │
 └─┴──┴──┴─┘
 
-Start at Start at (7,10)
+Start at (7,10)
 ↑ (6,10)
 ↑ (5,10)
 ↑ (4,10)

@@ -5,7 +5,7 @@
 →↑   ↓
  └X←←←
 
-Start at Start at (3,5)
+Start at (3,5)
 ← (3,4)
 ← (3,3)
 ← (3,2)

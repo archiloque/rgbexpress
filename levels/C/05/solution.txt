@@ -10,7 +10,7 @@
 ↓  ↑   │  │
 →→→↑   └──┘
 
-Start at Start at (0,0)
+Start at (0,0)
 → (0,1)
 → (0,2)
 → (0,3)
@@ -57,7 +57,7 @@ Start at Start at (0,0)
 │  │   ↑  │
 └──┘   ↑←←□
 
-Start at Start at (10,10)
+Start at (10,10)
 ← (10,9)
 ← (10,8)
 ← (10,7)

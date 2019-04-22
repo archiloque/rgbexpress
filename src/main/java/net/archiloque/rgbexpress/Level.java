@@ -11,15 +11,12 @@ import java.util.List;
  */
 final class Level {
 
-    final int height;
+    private final int height;
 
     final int width;
 
     @NotNull
     final byte[] roads;
-
-    @NotNull
-    private final byte[] elements;
 
     @NotNull
     final byte[] pickMap;
@@ -28,7 +25,7 @@ final class Level {
     final byte[] unloadMap;
 
     @NotNull
-    final int[][] switchMap;
+    final SwitchGroup[] switchGroups;
 
     @NotNull
     private final List<LevelTruck> levelTrucks = new ArrayList<>();
@@ -41,7 +38,6 @@ final class Level {
         this.height = height;
         this.width = width;
         this.roads = roads;
-        this.elements = elements;
 
         int levelSize = width * height;
 
@@ -52,13 +48,14 @@ final class Level {
         Arrays.fill(unloadMap, MapElement.EMPTY);
         pickMap = new byte[levelSize];
         Arrays.fill(pickMap, MapElement.EMPTY);
-        switchMap = new int[levelSize][];
 
-        int[] switchPositions = new int[MapElement.NUMBER_OF_SWITCH_TYPES];
-        List<Integer>[] switchedRoadPositions = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
+        List<Integer>[] disabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
+        List<Integer>[] enabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
+        List<Integer>[] switchedRoadPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
         for (int switchIndex = 0; switchIndex < MapElement.NUMBER_OF_SWITCH_TYPES; switchIndex++) {
-            switchPositions[switchIndex] = -1;
-            switchedRoadPositions[switchIndex] = new ArrayList<>();
+            enabledSwitchPositionsList[switchIndex] = new ArrayList<>();
+            disabledSwitchPositionsList[switchIndex] = new ArrayList<>();
+            switchedRoadPositionsList[switchIndex] = new ArrayList<>();
         }
 
         for (int currentPosition = 0; currentPosition < height * width; currentPosition++) {
@@ -74,18 +71,19 @@ final class Level {
                 isReachable(currentPosition + width);
                 unloadMap[currentPosition + width] = MapElement.WAREHOUSE_TO_PACKAGES.get(currentElement);
                 warehouses += 1;
-            } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS, currentElement) >= 0) {
-                int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_BUTTONS, currentElement);
-                if (switchPositions[switchIndex] != -1) {
-                    throw new IllegalArgumentException("Identical switches found");
-                }
-                switchPositions[switchIndex] = currentPosition;
+
+            } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_ENABLED, currentElement) >= 0) {
+                int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_ENABLED, currentElement);
+                enabledSwitchPositionsList[switchIndex].add(currentPosition);
+            } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, currentElement) >= 0) {
+                int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, currentElement);
+                disabledSwitchPositionsList[switchIndex].add(currentPosition);
             } else if (Arrays.binarySearch(MapElement.SWITCHES_ROAD_OPEN, currentElement) >= 0) {
                 int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_ROAD_OPEN, currentElement);
-                switchedRoadPositions[switchIndex].add(currentPosition);
+                switchedRoadPositionsList[switchIndex].add(currentPosition);
             } else if (Arrays.binarySearch(MapElement.SWITCHES_ROAD_CLOSED, currentElement) >= 0) {
                 int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_ROAD_CLOSED, currentElement);
-                switchedRoadPositions[switchIndex].add(currentPosition);
+                switchedRoadPositionsList[switchIndex].add(currentPosition);
 
                 byte switchedRoad = RoadElement.SWITCHED_ELEMENT[roads[currentPosition]];
                 if (switchedRoad == RoadElement.ERROR) {
@@ -98,19 +96,27 @@ final class Level {
             throw new IllegalArgumentException("Found " + packages + " packages but " + warehouses + " warehouses");
         }
 
+        switchGroups = new SwitchGroup[MapElement.NUMBER_OF_SWITCH_TYPES];
         for (int switchIndex = 0; switchIndex < MapElement.NUMBER_OF_SWITCH_TYPES; switchIndex++) {
-            int switchPosition = switchPositions[switchIndex];
-            List<Integer> switchedRoadPosition = switchedRoadPositions[switchIndex];
-            if (switchPosition != -1) {
-                if (switchedRoadPosition.isEmpty()) {
-                    throw new IllegalArgumentException("Found a switch but no switched road ");
-                } else {
-                    switchMap[switchPosition] = listToPrimitiveIntArray(switchedRoadPosition);
+            List<Integer> enabledSwitchPositions = enabledSwitchPositionsList[switchIndex];
+            List<Integer> disabledSwitchPositions = disabledSwitchPositionsList[switchIndex];
+            List<Integer> switchedRoadPositions = switchedRoadPositionsList[switchIndex];
+            if(enabledSwitchPositions.isEmpty()) {
+                if(! disabledSwitchPositions.isEmpty()) {
+                    throw new IllegalArgumentException("Found a disabled switch but no enabled switch");
+                } else if(! switchedRoadPositions.isEmpty()) {
+                    throw new IllegalArgumentException("Found a switched road but no switch");
                 }
-            } else if (!switchedRoadPosition.isEmpty()) {
-                throw new IllegalArgumentException("Found a switched road but no switch");
+            } else if(switchedRoadPositions.isEmpty()) {
+                throw new IllegalArgumentException("Found a switch but no switched road ");
             }
+            SwitchGroup switchGroup = new SwitchGroup(
+                    listToPrimitiveIntArray(switchedRoadPositions),
+                    listToPrimitiveIntArray(enabledSwitchPositions),
+                    listToPrimitiveIntArray(disabledSwitchPositions));
+            switchGroups[switchIndex] = switchGroup;
         }
+
         packagesToPick = packages;
     }
 
@@ -131,13 +137,26 @@ final class Level {
                     null,
                     null);
         }
+        byte[] switchMaps = new byte[width*height];
+        Arrays.fill(switchMaps, (byte)-1);
+        for (byte switchId = 0; switchId < MapElement.NUMBER_OF_SWITCH_TYPES; switchId++) {
+            SwitchGroup switchGroup = switchGroups[switchId];
+            for (int enabledSwitch : switchGroup.enabledSwitches) {
+                switchMaps[enabledSwitch] = switchId;
+            }
+        }
+
+        boolean[] previousSwitchState = new boolean[MapElement.NUMBER_OF_SWITCH_TYPES];
+        Arrays.fill(previousSwitchState, true);
         LevelState levelState = new LevelState(
                 this,
                 packagesToPick,
                 roads,
                 pickMap,
                 unloadMap,
-                trucks);
+                trucks,
+                switchMaps,
+                previousSwitchState);
         return levelState;
     }
 
@@ -171,5 +190,20 @@ final class Level {
             result[i] = list.get(i);
         }
         return result;
+    }
+
+    static class SwitchGroup {
+
+        @NotNull final int[] roads;
+
+        @NotNull final int[] enabledSwitches;
+
+        @NotNull final int[] disabledSwitches;
+
+        SwitchGroup(@NotNull int[] roads, @NotNull int[] enabledSwitches, @NotNull int[] disabledSwitches) {
+            this.roads = roads;
+            this.enabledSwitches = enabledSwitches;
+            this.disabledSwitches = disabledSwitches;
+        }
     }
 }

@@ -29,17 +29,20 @@ final class MapElement {
 
     static final char WHITE_TRUCK_CHAR = 'ᴡ';
 
-    static final char SWITCH_1_BUTTON_CHAR = 'ᴜ';
+    static final char SWITCH_1_BUTTON_ENABLED_CHAR = 'ᵘ';
+    static final char SWITCH_1_BUTTON_DISABLED_CHAR = 'ᵤ';
     static final char SWITCH_1_ROAD_OPEN_CHAR = 'u';
     static final char SWITCH_1_ROAD_CLOSED_CHAR = 'U';
 
-    static final char SWITCH_2_BUTTON_CHAR = 'ᴠ';
+    static final char SWITCH_2_BUTTON_ENABLED_CHAR = 'ᵛ';
+    static final char SWITCH_2_BUTTON_DISABLED_CHAR = 'ᵥ';
     static final char SWITCH_2_ROAD_OPEN_CHAR = 'v';
     static final char SWITCH_2_ROAD_CLOSED_CHAR = 'V';
 
-    static final char SWITCH_3_BUTTON_CHAR = 'ᴢ';
-    static final char SWITCH_3_ROAD_OPEN_CHAR = 'z';
-    static final char SWITCH_3_ROAD_CLOSED_CHAR = 'Z';
+    static final char SWITCH_3_BUTTON_ENABLED_CHAR = 'ᵒ';
+    static final char SWITCH_3_BUTTON_DISABLED_CHAR = 'ₒ';
+    static final char SWITCH_3_ROAD_OPEN_CHAR = 'o';
+    static final char SWITCH_3_ROAD_CLOSED_CHAR = 'O';
 
     static final byte EMPTY = 0;
 
@@ -61,16 +64,19 @@ final class MapElement {
 
     static final byte WHITE_TRUCK = YELLOW_WAREHOUSE + 1;
 
-    static final byte SWITCH_1_BUTTON = WHITE_TRUCK + 1;
-    static final byte SWITCH_1_ROAD_OPEN = SWITCH_1_BUTTON + 1;
+    static final byte SWITCH_1_BUTTON_ENABLED = WHITE_TRUCK + 1;
+    static final byte SWITCH_1_BUTTON_DISABLED= SWITCH_1_BUTTON_ENABLED + 1;
+    static final byte SWITCH_1_ROAD_OPEN = SWITCH_1_BUTTON_DISABLED + 1;
     static final byte SWITCH_1_ROAD_CLOSED = SWITCH_1_ROAD_OPEN + 1;
 
-    static final byte SWITCH_2_BUTTON = SWITCH_1_ROAD_CLOSED + 1;
-    static final byte SWITCH_2_ROAD_OPEN = SWITCH_2_BUTTON + 1;
+    static final byte SWITCH_2_BUTTON_ENABLED = SWITCH_1_ROAD_CLOSED + 1;
+    static final byte SWITCH_2_BUTTON_DISABLED = SWITCH_2_BUTTON_ENABLED + 1;
+    static final byte SWITCH_2_ROAD_OPEN = SWITCH_2_BUTTON_DISABLED + 1;
     static final byte SWITCH_2_ROAD_CLOSED = SWITCH_2_ROAD_OPEN + 1;
 
-    static final byte SWITCH_3_BUTTON = SWITCH_2_ROAD_CLOSED + 1;
-    static final byte SWITCH_3_ROAD_OPEN = SWITCH_3_BUTTON + 1;
+    static final byte SWITCH_3_BUTTON_ENABLED = SWITCH_2_ROAD_CLOSED + 1;
+    static final byte SWITCH_3_BUTTON_DISABLED = SWITCH_3_BUTTON_ENABLED + 1;
+    static final byte SWITCH_3_ROAD_OPEN = SWITCH_3_BUTTON_DISABLED + 1;
     static final byte SWITCH_3_ROAD_CLOSED = SWITCH_3_ROAD_OPEN + 1;
 
     static final int NUMBER_OF_SWITCH_TYPES = 3;
@@ -96,15 +102,18 @@ final class MapElement {
 
             WHITE_TRUCK_CHAR,
 
-            SWITCH_1_BUTTON_CHAR,
+            SWITCH_1_BUTTON_ENABLED_CHAR,
+            SWITCH_1_BUTTON_DISABLED_CHAR,
             SWITCH_1_ROAD_OPEN_CHAR,
             SWITCH_1_ROAD_CLOSED_CHAR,
 
-            SWITCH_2_BUTTON_CHAR,
+            SWITCH_2_BUTTON_ENABLED_CHAR,
+            SWITCH_2_BUTTON_DISABLED_CHAR,
             SWITCH_2_ROAD_OPEN_CHAR,
             SWITCH_2_ROAD_CLOSED_CHAR,
 
-            SWITCH_3_BUTTON_CHAR,
+            SWITCH_3_BUTTON_ENABLED_CHAR,
+            SWITCH_3_BUTTON_DISABLED_CHAR,
             SWITCH_3_ROAD_OPEN_CHAR,
             SWITCH_3_ROAD_CLOSED_CHAR,
     };
@@ -133,10 +142,16 @@ final class MapElement {
             YELLOW_WAREHOUSE,
     };
 
-    static final byte[] SWITCHES_BUTTONS = new byte[]{
-            SWITCH_1_BUTTON,
-            SWITCH_2_BUTTON,
-            SWITCH_3_BUTTON,
+    static final byte[] SWITCHES_BUTTONS_ENABLED = new byte[]{
+            SWITCH_1_BUTTON_ENABLED,
+            SWITCH_2_BUTTON_ENABLED,
+            SWITCH_3_BUTTON_ENABLED,
+    };
+
+    static final byte[] SWITCHES_BUTTONS_DISABLED = new byte[]{
+            SWITCH_1_BUTTON_DISABLED,
+            SWITCH_2_BUTTON_DISABLED,
+            SWITCH_3_BUTTON_DISABLED,
     };
 
     static final byte[] SWITCHES_ROAD_OPEN = new byte[]{

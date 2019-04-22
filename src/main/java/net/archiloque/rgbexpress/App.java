@@ -111,8 +111,6 @@ public final class App {
                     currentText.append(" maybe pick");
                 } else if (level.unloadMap[currentPosition] != MapElement.EMPTY) {
                     currentText.append(" unload");
-                } else if (level.switchMap[currentPosition] != null) {
-                    currentText.append(" switch");
                 }
                 previousPosition = currentPosition;
                 content.add(currentText.toString());

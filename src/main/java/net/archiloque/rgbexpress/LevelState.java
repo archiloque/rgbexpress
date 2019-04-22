@@ -9,28 +9,74 @@ import java.util.Map;
 
 final class LevelState {
 
-    private final @NotNull Level level;
-    private final int previousNumberOfUnprocessedElements;
-    private final @NotNull byte[] previousRoads;
-    private final @NotNull byte[] previousPickMap;
-    private final @NotNull byte[] previousUnloadMap;
-    private final @NotNull Truck[] currentTrucks;
+    /**
+     * The current level
+     */
+    private final @NotNull
+    Level level;
+
+    /**
+     * Number of unprocessed cargos
+     */
+    private final
+    int previousNumberOfUnprocessedCargos;
+
+    /**
+     * Maps of the road as {@link RoadElement}
+     */
+    private final @NotNull
+    byte[] previousRoadMaps;
+
+    /**
+     * Map of the packages to pick
+     */
+    private final @NotNull
+    byte[] previousPickMap;
+
+    /**
+     * Map of the warehouse drop points, designed by their package
+     */
+    private final @NotNull
+    byte[] previousUnloadMap;
+
+    /**
+     * Current trucks
+      */
+    private final @NotNull
+    Truck[] currentTrucks;
+
+    /**
+     * Map of the enabled switches, containing the id of the switch or -1 if not switch
+     */
+    private final @NotNull
+    byte[] previousSwitchMap;
+
+    /**
+     * The switch status per if of the switch (are they enabled or disabled)
+     */
+    private final @NotNull
+    boolean[] previousSwitchState;
 
     private static final boolean LOG = "true".equals(System.getenv("LOG"));
 
     LevelState(
             final @NotNull Level level,
-            final int previousNumberOfUnprocessedElements,
-            final @NotNull byte[] previousRoads,
+            final int previousNumberOfUnprocessedCargos,
+            final @NotNull byte[] previousRoadMaps,
             final @NotNull byte[] previousPickMap,
             final @NotNull byte[] previousUnloadMap,
-            final @NotNull Truck[] currentTrucks) {
+            final @NotNull Truck[] currentTrucks,
+            final @NotNull byte[] previousSwitchMap,
+            final @NotNull boolean[] previousSwitchState
+    ) {
         this.level = level;
-        this.previousNumberOfUnprocessedElements = previousNumberOfUnprocessedElements;
-        this.previousRoads = previousRoads;
+        this.previousNumberOfUnprocessedCargos = previousNumberOfUnprocessedCargos;
+        this.previousRoadMaps = previousRoadMaps;
         this.previousUnloadMap = previousUnloadMap;
         this.previousPickMap = previousPickMap;
         this.currentTrucks = currentTrucks;
+        this.previousSwitchMap = previousSwitchMap;
+        this.previousSwitchState = previousSwitchState;
     }
 
     /**
@@ -42,10 +88,12 @@ final class LevelState {
         return processTruck(
                 0,
                 new Truck[0],
-                previousNumberOfUnprocessedElements,
-                previousRoads,
+                previousNumberOfUnprocessedCargos,
+                previousRoadMaps,
                 previousPickMap,
                 previousUnloadMap,
+                previousSwitchMap,
+                previousSwitchState,
                 null,
                 false
         );
@@ -54,10 +102,12 @@ final class LevelState {
     private @Nullable Truck[] processTruck(
             final int truckIndex,
             final @NotNull Truck[] nextTrucks,
-            final int nextNumberOfUnprocessedElements,
-            final @NotNull byte[] nextRoads,
+            final int nextNumberOfUnprocessedCargos,
+            final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull byte[] nextSwitchMap,
+            final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
             final boolean anyTruckDriving
     ) {
@@ -67,22 +117,26 @@ final class LevelState {
                     truckIndex,
                     currentTruck,
                     nextTrucks,
-                    nextRoads,
+                    nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextSwitchMap,
+                    nextSwitchState,
                     forbiddenLocations,
-                    nextNumberOfUnprocessedElements,
+                    nextNumberOfUnprocessedCargos,
                     anyTruckDriving);
         } else {
             return processNotSoppedTruck(
                     truckIndex,
                     currentTruck,
                     nextTrucks,
-                    nextRoads,
+                    nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextSwitchMap,
+                    nextSwitchState,
                     forbiddenLocations,
-                    nextNumberOfUnprocessedElements,
+                    nextNumberOfUnprocessedCargos,
                     anyTruckDriving);
         }
     }
@@ -91,21 +145,25 @@ final class LevelState {
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
-            final @NotNull byte[] nextRoads,
+            final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull byte[] nextSwitchMap,
+            final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
-            final int nextNumberOfUnprocessedElements,
+            final int nextNumberOfUnprocessedCargos,
             final boolean anyTruckDriving) {
         // try to go up
         Truck[] result = processNotSoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
-                nextNumberOfUnprocessedElements,
-                nextRoads,
+                nextNumberOfUnprocessedCargos,
+                nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextSwitchMap,
+                nextSwitchState,
                 forbiddenLocations,
                 Direction.UP,
                 -level.width
@@ -118,10 +176,12 @@ final class LevelState {
                 truckIndex,
                 currentTruck,
                 nextTrucks,
-                nextNumberOfUnprocessedElements,
-                nextRoads,
+                nextNumberOfUnprocessedCargos,
+                nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextSwitchMap,
+                nextSwitchState,
                 forbiddenLocations,
                 Direction.DOWN,
                 level.width
@@ -134,10 +194,12 @@ final class LevelState {
                 truckIndex,
                 currentTruck,
                 nextTrucks,
-                nextNumberOfUnprocessedElements,
-                nextRoads,
+                nextNumberOfUnprocessedCargos,
+                nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextSwitchMap,
+                nextSwitchState,
                 forbiddenLocations,
                 Direction.LEFT,
                 -1
@@ -150,10 +212,12 @@ final class LevelState {
                 truckIndex,
                 currentTruck,
                 nextTrucks,
-                nextNumberOfUnprocessedElements,
-                nextRoads,
+                nextNumberOfUnprocessedCargos,
+                nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextSwitchMap,
+                nextSwitchState,
                 forbiddenLocations,
                 Direction.RIGHT,
                 +1
@@ -165,11 +229,13 @@ final class LevelState {
         result = processNotSoppedTruckTryStopping(
                 truckIndex,
                 currentTruck,
-                nextNumberOfUnprocessedElements,
+                nextNumberOfUnprocessedCargos,
                 nextTrucks,
-                nextRoads,
+                nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextSwitchMap,
+                nextSwitchState,
                 forbiddenLocations,
                 anyTruckDriving
         );
@@ -179,11 +245,13 @@ final class LevelState {
     private @Nullable Truck[] processNotSoppedTruckTryStopping(
             final int truckIndex,
             final @NotNull Truck currentTruck,
-            final int nextNumberOfUnprocessedElements,
+            final int nextNumberOfUnprocessedCargos,
             final @NotNull Truck[] nextTrucks,
-            final @NotNull byte[] nextRoads,
+            final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull byte[] nextSwitchMap,
+            final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
             final boolean anyTruckDriving) {
         if (
@@ -198,12 +266,14 @@ final class LevelState {
             );
             return endProcessTruck(
                     truckIndex,
-                    nextNumberOfUnprocessedElements,
+                    nextNumberOfUnprocessedCargos,
                     newTruck,
                     nextTrucks,
-                    nextRoads,
+                    nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextSwitchMap,
+                    nextSwitchState,
                     forbiddenLocations,
                     anyTruckDriving
             );
@@ -216,15 +286,17 @@ final class LevelState {
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
-            final int nextNumberOfUnprocessedElements,
-            final @NotNull byte[] nextRoads,
+            final int nextNumberOfUnprocessedCargos,
+            final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
-            final @Nullable IntegerListElement forbiddenLocations,
+            final @NotNull byte[] nextSwitchMap,
+            final @NotNull boolean[] nextSwitchState,
+            final @Nullable IntegerListElement nextForbiddenLocations,
             final int direction,
             final int deltaPosition) {
         int currentPosition = currentTruck.currentPosition;
-        byte currentRoad = nextRoads[currentPosition];
+        byte currentRoad = nextRoadMap[currentPosition];
         if (LOG) {
             String message = "Truck " + truckIndex + " at (" + (currentPosition / level.width) + ", " + (currentPosition % level.width) + ") and want to go " + Direction.AS_CHAR[direction] + " with road being [" + RoadElement.BYTE_TO_CHAR.get(currentRoad) + "]";
             System.out.println(message);
@@ -253,7 +325,7 @@ final class LevelState {
                 new IntegerListElement(currentPosition, currentTruck.previousPositions)
         );
 
-        int nextNextNumberOfUnprocessedElements = nextNumberOfUnprocessedElements;
+        int nextNextNumberOfUnprocessedCargos = nextNumberOfUnprocessedCargos;
         @NotNull byte[] nextNextPickMap = nextPickMap;
         @NotNull byte[] nextNextUnloadMap = nextUnloadMap;
 
@@ -283,13 +355,13 @@ final class LevelState {
             nextNextUnloadMap = Arrays.copyOf(nextNextUnloadMap, nextNextUnloadMap.length);
             nextNextUnloadMap[targetPosition] = MapElement.EMPTY;
             newTruck.cargo = newTruck.cargo.previous;
-            nextNextNumberOfUnprocessedElements--;
+            nextNextNumberOfUnprocessedCargos--;
 
-            if (nextNextNumberOfUnprocessedElements == 0) {
+            if (nextNextNumberOfUnprocessedCargos == 0) {
                 // we found a solution !
                 Truck[] nextNextTrucks = Arrays.copyOf(nextTrucks, currentTrucks.length);
                 nextNextTrucks[truckIndex] = newTruck;
-                if (!checkForbiddenLocations(nextNextTrucks, forbiddenLocations)) {
+                if (!checkForbiddenLocations(nextNextTrucks, nextForbiddenLocations)) {
                     if (LOG) {
                         System.out.println("A truck is on a forbidden location");
                     }
@@ -333,7 +405,7 @@ final class LevelState {
             }
         }
 
-        byte targetRoad = nextRoads[targetPosition];
+        byte targetRoad = nextRoadMap[targetPosition];
         if (RoadElement.BLOCKED_ROAD[targetRoad]) {
             if (LOG) {
                 System.out.println("Road ahead is blocked");
@@ -345,7 +417,7 @@ final class LevelState {
             System.out.println("We can go there");
         }
 
-        @NotNull byte[] nextNextRoads = Arrays.copyOf(nextRoads, nextRoads.length);
+        @NotNull byte[] nextNextRoads = Arrays.copyOf(nextRoadMap, nextRoadMap.length);
         byte removedDirection = RoadElement.REMOVE_DIRECTION[direction][currentRoad];
         if (removedDirection == RoadElement.ERROR) {
             throw new IllegalArgumentException("Woops !");
@@ -358,30 +430,61 @@ final class LevelState {
         }
         nextNextRoads[targetPosition] = removedDirection;
 
-        IntegerListElement nexForbiddenLocations = forbiddenLocations;
+        byte[] nextNextSwitchMap = nextSwitchMap;
+        boolean[] nextNextSwitchState = nextSwitchState;
+        IntegerListElement nextNextForbiddenLocations = nextForbiddenLocations;
 
-        @Nullable int[] roadsToSwitchPositions = level.switchMap[targetPosition];
-        if (roadsToSwitchPositions != null) {
+        byte switchId = nextNextSwitchMap[currentPosition];
+        if (switchId != -1) {
             if (LOG) {
                 System.out.println("On a switch");
             }
-            for (int roadToSwitchPosition : roadsToSwitchPositions) {
-                nexForbiddenLocations = new IntegerListElement(roadToSwitchPosition, nexForbiddenLocations);
+            Level.SwitchGroup switchGroup = level.switchGroups[switchId];
+
+            for (int roadToSwitchPosition : switchGroup.roads) {
+                nextNextForbiddenLocations = new IntegerListElement(roadToSwitchPosition, nextNextForbiddenLocations);
                 int currentRoadAtPosition = nextNextRoads[roadToSwitchPosition];
                 byte switchedRoad = RoadElement.SWITCHED_ELEMENT[currentRoadAtPosition];
                 nextNextRoads[roadToSwitchPosition] = switchedRoad;
             }
+            for (int disabledSwitch : switchGroup.disabledSwitches) {
+                if(disabledSwitch != currentPosition) {
+                    nextNextForbiddenLocations = new IntegerListElement(disabledSwitch, nextNextForbiddenLocations);
+                }
+            }
+            for (int enabledSwitch : switchGroup.enabledSwitches) {
+                if(enabledSwitch != currentPosition) {
+                    nextNextForbiddenLocations = new IntegerListElement(enabledSwitch, nextNextForbiddenLocations);
+                }
+            }
+            boolean currentStatus = nextNextSwitchState[switchId];
+
+            nextNextSwitchMap = Arrays.copyOf(nextNextSwitchMap, nextNextSwitchMap.length);
+            int[] switchesToEnable = currentStatus ? switchGroup.disabledSwitches : switchGroup.enabledSwitches;
+            int[] switchesToDisable = currentStatus ? switchGroup.enabledSwitches : switchGroup.disabledSwitches;
+
+            for (int switchPosition : switchesToEnable) {
+                nextNextSwitchMap[switchPosition] = switchId;
+            }
+            for (int switchPosition : switchesToDisable) {
+                nextNextSwitchMap[switchPosition] = -1;
+            }
+
+            nextNextSwitchState = Arrays.copyOf(nextNextSwitchState, MapElement.NUMBER_OF_SWITCH_TYPES);
+            nextNextSwitchState[switchId] = !currentStatus;
         }
 
         return endProcessTruck(
                 truckIndex,
-                nextNextNumberOfUnprocessedElements,
+                nextNextNumberOfUnprocessedCargos,
                 newTruck,
                 nextTrucks,
                 nextNextRoads,
                 nextNextPickMap,
                 nextNextUnloadMap,
-                nexForbiddenLocations,
+                nextNextSwitchMap,
+                nextSwitchState,
+                nextNextForbiddenLocations,
                 true
         );
     }
@@ -390,11 +493,13 @@ final class LevelState {
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
-            final @NotNull byte[] nextRoads,
+            final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull byte[] nextSwitchMap,
+            final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
-            final int nextNumberOfUnprocessedElements,
+            final int nextNumberOfUnprocessedCargos,
             final boolean anyTruckDriving) {
         // already stopped, going on
 
@@ -404,12 +509,14 @@ final class LevelState {
         }
         return endProcessTruck(
                 truckIndex,
-                nextNumberOfUnprocessedElements,
+                nextNumberOfUnprocessedCargos,
                 currentTruck,
                 nextTrucks,
-                nextRoads,
+                nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextSwitchMap,
+                nextSwitchState,
                 forbiddenLocations,
                 anyTruckDriving
         );
@@ -417,12 +524,14 @@ final class LevelState {
 
     private @Nullable Truck[] endProcessTruck(
             final int truckIndex,
-            final int nextNumberOfUnprocessedElements,
+            final int nextNumberOfUnprocessedCargos,
             final Truck newTruck,
             final @NotNull Truck[] nextTrucks,
-            final @NotNull byte[] nextRoads,
+            final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull byte[] nextSwitchMap,
+            final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
             final boolean anyTruckDriving) {
         // Add truck to list
@@ -437,11 +546,13 @@ final class LevelState {
                 if (checkForbiddenLocations(nextTrucks, forbiddenLocations)) {
                     level.states.add(new LevelState(
                             level,
-                            nextNumberOfUnprocessedElements,
-                            nextRoads,
+                            nextNumberOfUnprocessedCargos,
+                            nextRoadMap,
                             nextPickMap,
                             nextUnloadMap,
-                            nextNextTrucks
+                            nextNextTrucks,
+                            nextSwitchMap,
+                            nextSwitchState
                     ));
                 }
             }
@@ -451,10 +562,12 @@ final class LevelState {
             return processTruck(
                     truckIndex + 1,
                     nextNextTrucks,
-                    nextNumberOfUnprocessedElements,
-                    nextRoads,
+                    nextNumberOfUnprocessedCargos,
+                    nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextSwitchMap,
+                    nextSwitchState,
                     forbiddenLocations,
                     anyTruckDriving);
         }

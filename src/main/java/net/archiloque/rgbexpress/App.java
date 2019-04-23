@@ -9,10 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -111,6 +108,10 @@ public final class App {
                     currentText.append(" maybe pick");
                 } else if (level.unloadMap[currentPosition] != MapElement.EMPTY) {
                     currentText.append(" unload");
+                } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_ENABLED, level.elements[currentPosition]) >= 0) {
+                    currentText.append(" click");
+                } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, level.elements[currentPosition]) >= 0) {
+                    currentText.append(" click");
                 }
                 previousPosition = currentPosition;
                 content.add(currentText.toString());

@@ -15,29 +15,34 @@ final class Level {
 
     final int width;
 
-    @NotNull
-    final byte[] roads;
+    @NotNull final
+    byte[] roads;
 
-    @NotNull
-    final byte[] pickMap;
+    @NotNull final
+    byte[] elements;
 
-    @NotNull
-    final byte[] unloadMap;
+    @NotNull final
+    byte[] pickMap;
 
-    @NotNull
-    final SwitchGroup[] switchGroups;
+    @NotNull final
+    byte[] unloadMap;
 
-    @NotNull
-    private final List<LevelTruck> levelTrucks = new ArrayList<>();
+    @NotNull final
+    SwitchGroup[] switchGroups;
+
+    @NotNull private
+    final List<LevelTruck> levelTrucks = new ArrayList<>();
 
     private final int packagesToPick;
 
-    final LinkedList<LevelState> states = new LinkedList<>();
+    @NotNull final
+    LinkedList<LevelState> states = new LinkedList<>();
 
     Level(int height, int width, @NotNull byte[] roads, @NotNull byte[] elements) {
         this.height = height;
         this.width = width;
         this.roads = roads;
+        this.elements = elements;
 
         int levelSize = width * height;
 

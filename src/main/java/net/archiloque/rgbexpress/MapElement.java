@@ -44,6 +44,11 @@ final class MapElement {
     static final char SWITCH_3_ROAD_OPEN_CHAR = 'o';
     static final char SWITCH_3_ROAD_CLOSED_CHAR = 'O';
 
+    static final char SWITCH_4_BUTTON_ENABLED_CHAR = 'ⁱ';
+    static final char SWITCH_4_BUTTON_DISABLED_CHAR = 'ᵢ';
+    static final char SWITCH_4_ROAD_OPEN_CHAR = 'i';
+    static final char SWITCH_4_ROAD_CLOSED_CHAR = 'I';
+
     static final byte EMPTY = 0;
 
     static final byte RED_TRUCK = EMPTY + 1;
@@ -79,7 +84,12 @@ final class MapElement {
     static final byte SWITCH_3_ROAD_OPEN = SWITCH_3_BUTTON_DISABLED + 1;
     static final byte SWITCH_3_ROAD_CLOSED = SWITCH_3_ROAD_OPEN + 1;
 
-    static final int NUMBER_OF_SWITCH_TYPES = 3;
+    static final byte SWITCH_4_BUTTON_ENABLED = SWITCH_3_ROAD_CLOSED + 1;
+    static final byte SWITCH_4_BUTTON_DISABLED = SWITCH_4_BUTTON_ENABLED + 1;
+    static final byte SWITCH_4_ROAD_OPEN = SWITCH_4_BUTTON_DISABLED + 1;
+    static final byte SWITCH_4_ROAD_CLOSED = SWITCH_4_ROAD_OPEN + 1;
+
+    static final int NUMBER_OF_SWITCH_TYPES = 4;
 
     static final char[] ELEMENTS_IN_MAP = new char[]{
             EMPTY_CHAR,
@@ -116,6 +126,11 @@ final class MapElement {
             SWITCH_3_BUTTON_DISABLED_CHAR,
             SWITCH_3_ROAD_OPEN_CHAR,
             SWITCH_3_ROAD_CLOSED_CHAR,
+
+            SWITCH_4_BUTTON_ENABLED_CHAR,
+            SWITCH_4_BUTTON_DISABLED_CHAR,
+            SWITCH_4_ROAD_OPEN_CHAR,
+            SWITCH_4_ROAD_CLOSED_CHAR,
     };
 
     static final Map<Character, Byte> CHAR_TO_BYTE = new HashMap<>(ELEMENTS_IN_MAP.length);
@@ -146,24 +161,28 @@ final class MapElement {
             SWITCH_1_BUTTON_ENABLED,
             SWITCH_2_BUTTON_ENABLED,
             SWITCH_3_BUTTON_ENABLED,
+            SWITCH_4_BUTTON_ENABLED,
     };
 
     static final byte[] SWITCHES_BUTTONS_DISABLED = new byte[]{
             SWITCH_1_BUTTON_DISABLED,
             SWITCH_2_BUTTON_DISABLED,
             SWITCH_3_BUTTON_DISABLED,
+            SWITCH_4_BUTTON_DISABLED,
     };
 
     static final byte[] SWITCHES_ROAD_OPEN = new byte[]{
             SWITCH_1_ROAD_OPEN,
             SWITCH_2_ROAD_OPEN,
             SWITCH_3_ROAD_OPEN,
+            SWITCH_4_ROAD_OPEN,
     };
 
     static final byte[] SWITCHES_ROAD_CLOSED = new byte[]{
             SWITCH_1_ROAD_CLOSED,
             SWITCH_2_ROAD_CLOSED,
             SWITCH_3_ROAD_CLOSED,
+            SWITCH_4_ROAD_CLOSED,
     };
 
     static final Map<Byte, Byte> WAREHOUSE_TO_PACKAGES = new HashMap<>(WAREHOUSES.length);

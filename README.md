@@ -23,61 +23,61 @@ java -jar target/rgbexpress-1.0-SNAPSHOT.jar levels/A/04
 ## Elements to be used in maps
 
 ```
-EMPTY ' '
+empty ' '
 
-BLUE TRUCK ʙ
-BLUE PACKAGE b
-BLUE WAREHOUSE B
+blue truck ʙ
+blue package b
+blue warehouse B
 
-GREEN TRUCK ɢ
-GREEN PACKAGE g
-GREEN WAREHOUSE G
+green truck ɢ
+green package g
+green warehouse G
 
-RED TRUCK ʀ
-RED PACKAGE r
-RED WAREHOUSE R
+red truck ʀ
+red package r
+red warehouse R
 
-WHITE TRUCK ᴡ
+white truck ᴡ
 
-YELLOW TRUCK ʏ
-YELLOW PACKAGE y
-YELLOW WAREHOUSE Y
+yellow truck ʏ
+yellow package y
+yellow warehouse Y
 
-SWITCH 1 BUTTON ENABLED ᵘ
-SWITCH 1 BUTTON DISABLED ᵤ
-SWITCH 1 ROAD OPEN u
-SWITCH 1 ROAD CLOSED U
+switch 1 button enabled ᵘ
+switch 1 button disabled ᵤ
+switch 1 road open u
+switch 1 road closed U
 
-SWITCH 2 BUTTON ENABLED ᵛ
-SWITCH 2 BUTTON DISABLED ᵥ
-SWITCH 2 ROAD OPEN v
-SWITCH 2 ROAD CLOSED V
+switch 2 button enabled ᵛ
+switch 2 button disabled ᵥ
+switch 2 road open v
+switch 2 road closed V
 
-SWITCH 3 BUTTON ENABLED ᵒ
-SWITCH 3 BUTTON DISABLED ₒ
-SWITCH 3 ROAD OPEN o
-SWITCH 3 ROAD CLOSED O
+switch 3 button enabled ᵒ
+switch 3 button disabled ₒ
+switch 3 road open o
+switch 3 road closed O
     
-SWITCH 4 BUTTON ENABLED ⁱ
-SWITCH 4 BUTTON DISABLED ᵢ
-SWITCH 4 ROAD OPEN i
-SWITCH 4 ROAD CLOSED I
+switch 4 button enabled ⁱ
+switch 4 button disabled ᵢ
+switch 4 road open i
+switch 4 road closed I
 
-CROSSING ┼
-LEFT RIGHT ─
-UP DOWN │
-LEFT UP ┘
-RIGHT UP └
-LEFT DOWN ┐
-RIGHT DOWN ┌
-LEFT ╴
-RIGHT ╶
-UP ╵
-DOWN ╷
-LEFT UP DOWN ┤
-RIGHT UP DOWN ├
-LEFT RIGHT UP ┴
-LEFT RIGHT DOWN ┬
+crossing ┼
+left right ─
+up down │
+left up ┘
+right up └
+left down ┐
+right down ┌
+left ╴
+right ╶
+up ╵
+down ╷
+left up down ┤
+right up down ├
+left right up ┴
+left right down ┬
 ```
 
 Short version :

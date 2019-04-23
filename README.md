@@ -82,7 +82,7 @@ Short version :
 ʀrR
 ᴡ
 ʏyY
-ᵘᵤU
+ᵘᵤuU
 ᵛᵥvV
 ᵒₒoO
     

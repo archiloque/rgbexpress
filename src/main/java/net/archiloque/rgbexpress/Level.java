@@ -15,27 +15,34 @@ final class Level {
 
     final int width;
 
-    @NotNull final
+    @NotNull
+    final
     byte[] roads;
 
-    @NotNull final
+    @NotNull
+    final
     byte[] elements;
 
-    @NotNull final
+    @NotNull
+    final
     byte[] pickMap;
 
-    @NotNull final
+    @NotNull
+    final
     byte[] unloadMap;
 
-    @NotNull final
+    @NotNull
+    final
     SwitchGroup[] switchGroups;
 
-    @NotNull private
+    @NotNull
+    private
     final List<LevelTruck> levelTrucks = new ArrayList<>();
 
     private final int packagesToPick;
 
-    @NotNull final
+    @NotNull
+    final
     LinkedList<LevelState> states = new LinkedList<>();
 
     Level(int height, int width, @NotNull byte[] roads, @NotNull byte[] elements) {
@@ -106,13 +113,13 @@ final class Level {
             List<Integer> enabledSwitchPositions = enabledSwitchPositionsList[switchIndex];
             List<Integer> disabledSwitchPositions = disabledSwitchPositionsList[switchIndex];
             List<Integer> switchedRoadPositions = switchedRoadPositionsList[switchIndex];
-            if(enabledSwitchPositions.isEmpty()) {
-                if(! disabledSwitchPositions.isEmpty()) {
+            if (enabledSwitchPositions.isEmpty()) {
+                if (!disabledSwitchPositions.isEmpty()) {
                     throw new IllegalArgumentException("Found a disabled switch but no enabled switch");
-                } else if(! switchedRoadPositions.isEmpty()) {
+                } else if (!switchedRoadPositions.isEmpty()) {
                     throw new IllegalArgumentException("Found a switched road but no switch");
                 }
-            } else if(switchedRoadPositions.isEmpty()) {
+            } else if (switchedRoadPositions.isEmpty()) {
                 throw new IllegalArgumentException("Found a switch but no switched road ");
             }
             SwitchGroup switchGroup = new SwitchGroup(
@@ -127,7 +134,8 @@ final class Level {
 
     private void isReachable(int position) {
         if (roads[position] == RoadElement.EMPTY) {
-            throw new IllegalArgumentException("Element at (" + (position / width) + ", " + (position % width) + ") is not reachable");
+            Coordinate positionCoordinates = getCoordinate(position);
+            throw new IllegalArgumentException("Element at (" + positionCoordinates.line + ", " + positionCoordinates.column + ") is not reachable");
         }
     }
 
@@ -142,8 +150,8 @@ final class Level {
                     null,
                     null);
         }
-        byte[] switchMaps = new byte[width*height];
-        Arrays.fill(switchMaps, (byte)-1);
+        byte[] switchMaps = new byte[width * height];
+        Arrays.fill(switchMaps, (byte) -1);
         for (byte switchId = 0; switchId < MapElement.NUMBER_OF_SWITCH_TYPES; switchId++) {
             SwitchGroup switchGroup = switchGroups[switchId];
             for (int enabledSwitch : switchGroup.enabledSwitches) {
@@ -178,6 +186,12 @@ final class Level {
         return result;
     }
 
+    @NotNull Coordinate getCoordinate(int position) {
+        int line = position / width;
+        int column = position % width;
+        return new Coordinate(line, column);
+    }
+
     private static final class LevelTruck {
 
         private final int position;
@@ -197,18 +211,32 @@ final class Level {
         return result;
     }
 
-    static class SwitchGroup {
+    static final class SwitchGroup {
 
-        @NotNull final int[] roads;
+        @NotNull
+        final int[] roads;
 
-        @NotNull final int[] enabledSwitches;
+        @NotNull
+        final int[] enabledSwitches;
 
-        @NotNull final int[] disabledSwitches;
+        @NotNull
+        final int[] disabledSwitches;
 
         SwitchGroup(@NotNull int[] roads, @NotNull int[] enabledSwitches, @NotNull int[] disabledSwitches) {
             this.roads = roads;
             this.enabledSwitches = enabledSwitches;
             this.disabledSwitches = disabledSwitches;
+        }
+    }
+
+    static final class Coordinate {
+
+        final int line;
+        final int column;
+
+        Coordinate(int line, int column) {
+            this.line = line;
+            this.column = column;
         }
     }
 }

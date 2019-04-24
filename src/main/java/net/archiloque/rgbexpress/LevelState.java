@@ -41,7 +41,7 @@ final class LevelState {
 
     /**
      * Current trucks
-      */
+     */
     private final @NotNull
     Truck[] currentTrucks;
 
@@ -298,7 +298,7 @@ final class LevelState {
         int currentPosition = currentTruck.currentPosition;
         byte currentRoad = nextRoadMap[currentPosition];
         if (LOG) {
-            String message = "Truck " + truckIndex + " at (" + (currentPosition / level.width) + ", " + (currentPosition % level.width) + ") and want to go " + Direction.AS_CHAR[direction] + " with road being [" + RoadElement.BYTE_TO_CHAR.get(currentRoad) + "]";
+            String message = "Truck " + truckIndex + " " + MapElement.TRUCK_TO_NAME.get(currentTruck.type) + " at (" + (currentPosition / level.width) + ", " + (currentPosition % level.width) + ") and want to go " + Direction.AS_CHAR[direction] + " with road being [" + RoadElement.BYTE_TO_CHAR.get(currentRoad) + "]";
             System.out.println(message);
         }
 
@@ -329,8 +329,8 @@ final class LevelState {
         @NotNull byte[] nextNextPickMap = nextPickMap;
         @NotNull byte[] nextNextUnloadMap = nextUnloadMap;
 
-        byte canUnload = nextNextUnloadMap[targetPosition];
-        if (canUnload != MapElement.EMPTY) {
+        byte elementToUnload = nextNextUnloadMap[targetPosition];
+        if (elementToUnload != MapElement.EMPTY) {
             if (newTruck.cargo == null) {
                 // no cargo on a space we should unload one => stop
                 if (LOG) {
@@ -341,17 +341,25 @@ final class LevelState {
 
             // get the last cargo
             byte cargo = newTruck.cargo.element;
-            if (cargo != canUnload) {
+            if (cargo != elementToUnload) {
                 // cargo of the wrong type => stop
                 if (LOG) {
-                    System.out.println("Can't go there because we should unload a cargo of another type");
+                    System.out.println("Can't go there because the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " cargo doesn't match the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + "warehouse");
+                }
+                return null;
+            }
+
+            if (!MapElement.CAN_UNLOAD[newTruck.type][elementToUnload]) {
+                if (LOG) {
+                    System.out.println("Can't go there because the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " cargo can't be unload by a " + MapElement.TRUCK_TO_NAME.get(newTruck.type) +" truck");
                 }
                 return null;
             }
             // unload the cargo
             if (LOG) {
-                System.out.println("Unload a cargo");
+                System.out.println("Unload a " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " cargo");
             }
+
             nextNextUnloadMap = Arrays.copyOf(nextNextUnloadMap, nextNextUnloadMap.length);
             nextNextUnloadMap[targetPosition] = MapElement.EMPTY;
             newTruck.cargo = newTruck.cargo.previous;
@@ -379,15 +387,9 @@ final class LevelState {
                 return nextNextTrucks;
             }
         } else {
-            byte canPick = nextNextPickMap[targetPosition];
-            if (canPick != MapElement.EMPTY) {
-                if (!MapElement.CAN_PICK[newTruck.type][canPick]) {
-                    // cargo of the wrong type => stop
-                    if (LOG) {
-                        System.out.println("Can't go there because we can't pick a cargo");
-                    }
-                    return null;
-                } else if ((newTruck.cargo != null) && (newTruck.cargo.size == 3)) {
+            byte elementToPick = nextNextPickMap[targetPosition];
+            if (elementToPick != MapElement.EMPTY) {
+                if ((newTruck.cargo != null) && (newTruck.cargo.size == 3)) {
                     // enough cargo already => stop
                     if (LOG) {
                         System.out.println("Can't go there because we already have enough cargo");
@@ -397,7 +399,7 @@ final class LevelState {
                     // pick the content since it OK
                     nextNextPickMap = Arrays.copyOf(nextNextPickMap, nextNextPickMap.length);
                     nextNextPickMap[targetPosition] = MapElement.EMPTY;
-                    newTruck.cargo = new ByteListElement(canPick, newTruck.cargo);
+                    newTruck.cargo = new ByteListElement(elementToPick, newTruck.cargo);
                     if (LOG) {
                         System.out.println("Load a cargo");
                     }
@@ -420,13 +422,13 @@ final class LevelState {
         @NotNull byte[] nextNextRoads = Arrays.copyOf(nextRoadMap, nextRoadMap.length);
         byte removedDirection = RoadElement.REMOVE_DIRECTION[direction][currentRoad];
         if (removedDirection == RoadElement.ERROR) {
-            throw new IllegalArgumentException("Woops !");
+            woops(currentPosition);
         }
         nextNextRoads[currentPosition] = removedDirection;
         int oppositeDirection = Direction.OPPOSITE[direction];
         removedDirection = RoadElement.REMOVE_DIRECTION[oppositeDirection][targetRoad];
         if (removedDirection == RoadElement.ERROR) {
-            throw new IllegalArgumentException("Woops !");
+            woops(currentPosition);
         }
         nextNextRoads[targetPosition] = removedDirection;
 
@@ -445,15 +447,19 @@ final class LevelState {
                 nextNextForbiddenLocations = new IntegerListElement(roadToSwitchPosition, nextNextForbiddenLocations);
                 int currentRoadAtPosition = nextNextRoads[roadToSwitchPosition];
                 byte switchedRoad = RoadElement.SWITCHED_ELEMENT[currentRoadAtPosition];
+                if (switchedRoad == RoadElement.ERROR) {
+                    woops(roadToSwitchPosition);
+                }
                 nextNextRoads[roadToSwitchPosition] = switchedRoad;
             }
+
             for (int disabledSwitch : switchGroup.disabledSwitches) {
-                if(disabledSwitch != currentPosition) {
+                if (disabledSwitch != currentPosition) {
                     nextNextForbiddenLocations = new IntegerListElement(disabledSwitch, nextNextForbiddenLocations);
                 }
             }
             for (int enabledSwitch : switchGroup.enabledSwitches) {
-                if(enabledSwitch != currentPosition) {
+                if (enabledSwitch != currentPosition) {
                     nextNextForbiddenLocations = new IntegerListElement(enabledSwitch, nextNextForbiddenLocations);
                 }
             }
@@ -601,6 +607,11 @@ final class LevelState {
             }
             return true;
         }
+    }
+
+    private void woops(int position) {
+        Level.Coordinate coordinate = level.getCoordinate(position);
+        throw new IllegalArgumentException("Woops for (" + coordinate.line + ", " + coordinate.column + ")");
     }
 
 

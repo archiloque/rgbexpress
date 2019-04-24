@@ -7,7 +7,7 @@
   ↑  │  │  
   □  ╵  └╴ 
 
-Start at (7,2)
+Start at (7,2) (red truck)
 ↑ (6,2)
 ↑ (5,2)
 → (5,3)
@@ -15,8 +15,8 @@ Start at (7,2)
 → (5,5)
 ↑ (4,5)
 ↑ (3,5)
-↑ (2,5) maybe pick
-↑ (1,5) unload
+↑ (2,5) maybe pick a red package
+↑ (1,5) unload a red package
 
            
 ┌─┬──┬──X←←
@@ -27,20 +27,20 @@ Start at (7,2)
   │  ↑  │  
   ╵  □  └╴ 
 
-Start at (7,5)
+Start at (7,5) (blue truck)
 ↑ (6,5)
 ↑ (5,5)
 → (5,6)
 → (5,7)
 → (5,8)
 → (5,9)
-→ (5,10) maybe pick
+→ (5,10) maybe pick a blue package
 ↑ (4,10)
 ↑ (3,10)
 ↑ (2,10)
 ↑ (1,10)
 ← (1,9)
-← (1,8) unload
+← (1,8) unload a blue package
 
            
 →X┬──┬──┬─┐
@@ -51,7 +51,7 @@ Start at (7,5)
   │  │  ↑  
   ╵  ╵  ↑□ 
 
-Start at (7,9)
+Start at (7,9) (yellow truck)
 ← (7,8)
 ↑ (6,8)
 ↑ (5,8)
@@ -60,7 +60,7 @@ Start at (7,9)
 ← (3,7)
 ← (3,6)
 ← (3,5)
-← (3,4) maybe pick
+← (3,4) maybe pick a yellow package
 ← (3,3)
 ← (3,2)
 ↓ (4,2)
@@ -71,5 +71,5 @@ Start at (7,9)
 ↑ (3,0)
 ↑ (2,0)
 ↑ (1,0)
-→ (1,1) unload
+→ (1,1) unload a yellow package
 

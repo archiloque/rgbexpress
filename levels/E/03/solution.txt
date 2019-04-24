@@ -4,8 +4,8 @@
    ↑   ↓   
 □→→↑───→→→X
 
-Start at (4,0)
-→ (4,1) maybe pick
+Start at (4,0) (red truck)
+→ (4,1) maybe pick a red package
 → (4,2) click
 → (4,3)
 ↑ (3,3)
@@ -26,5 +26,5 @@ Start at (4,0)
 ↓ (4,7)
 → (4,8)
 → (4,9)
-→ (4,10) unload
+→ (4,10) unload a red package
 

@@ -388,7 +388,7 @@ final class RoadElement {
     };
 
     static final byte[] SWITCHED_ELEMENT = new byte[]{
-            ERROR,// EMPTY
+            EMPTY,// EMPTY
             ERROR,// CROSSING
 
             LEFT_RIGHT_BLOCKED,// LEFT_RIGHT

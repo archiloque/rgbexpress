@@ -7,33 +7,33 @@
   ↓  ↑  │  
   →→→↑──┘  
 
-Start at (4,0)
+Start at (4,0) (white truck)
 → (4,1)
 → (4,2)
 ↓ (5,2)
 ↓ (6,2)
 ↓ (7,2)
 → (7,3)
-→ (7,4) maybe pick
+→ (7,4) maybe pick a red package
 → (7,5)
 ↑ (6,5)
-↑ (5,5) maybe pick
+↑ (5,5) maybe pick a green package
 ↑ (4,5)
 ← (4,4)
 ← (4,3)
 ← (4,2)
-↑ (3,2) maybe pick
+↑ (3,2) maybe pick a blue package
 ↑ (2,2)
 ↑ (1,2)
 → (1,3)
-→ (1,4) unload
+→ (1,4) unload a blue package
 → (1,5)
-→ (1,6) unload
+→ (1,6) unload a green package
 → (1,7)
 → (1,8)
 ↓ (2,8)
 ↓ (3,8)
 ↓ (4,8)
 → (4,9)
-→ (4,10) unload
+→ (4,10) unload a red package
 

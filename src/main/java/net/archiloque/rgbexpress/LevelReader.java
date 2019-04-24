@@ -42,7 +42,7 @@ final class LevelReader {
                 roads[position] = RoadElement.CHAR_TO_BYTE.get(roadChar);
 
                 char elementChar = elementsLine.charAt(columnIndex);
-                if (Arrays.binarySearch(MapElement.ELEMENTS_IN_MAP, elementChar) >= 0) {
+                if (Arrays.binarySearch(MapElement.ALL_ELEMENTS, elementChar) >= 0) {
                     elements[position] = MapElement.CHAR_TO_BYTE.get(elementChar);
 
                 } else {

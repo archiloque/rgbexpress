@@ -8,11 +8,11 @@
 ↑   │   ↓
 ↑←←←←←←←←
 
-Start at (4,4)
+Start at (4,4) (blue truck)
 → (4,5)
 → (4,6)
 → (4,7)
-→ (4,8) maybe pick
+→ (4,8) maybe pick a blue package
 ↓ (5,8)
 ↓ (6,8)
 ↓ (7,8)
@@ -29,7 +29,7 @@ Start at (4,4)
 ↑ (6,0)
 ↑ (5,0)
 ↑ (4,0)
-→ (4,1) unload
+→ (4,1) unload a blue package
 → (4,2)
 → (4,3)
 → (4,4)
@@ -40,14 +40,14 @@ Start at (4,4)
 ↑ (5,2)
 ↑ (4,2)
 ↑ (3,2)
-↑ (2,2) maybe pick
-→ (2,3) unload
+↑ (2,2) maybe pick a blue package
+→ (2,3) unload a blue package
 → (2,4)
 → (2,5)
-→ (2,6) maybe pick
+→ (2,6) maybe pick a blue package
 ↓ (3,6)
 ↓ (4,6)
 ↓ (5,6)
 ↓ (6,6)
-← (6,5) unload
+← (6,5) unload a blue package
 

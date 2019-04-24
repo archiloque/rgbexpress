@@ -10,7 +10,7 @@
 │   ↑ │   │
 □→→→↑ └───┘
 
-Start at (10,0)
+Start at (10,0) (red truck)
 → (10,1)
 → (10,2)
 → (10,3)
@@ -58,9 +58,9 @@ Start at (10,0)
 ← (5,2)
 ← (5,1)
 ← (5,0)
-↑ (4,0) maybe pick
+↑ (4,0) maybe pick a red package
 ↑ (3,0)
 ↑ (2,0)
 → (2,1)
-→ (2,2) unload
+→ (2,2) unload a red package
 

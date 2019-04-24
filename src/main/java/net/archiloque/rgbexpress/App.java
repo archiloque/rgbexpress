@@ -9,7 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -71,20 +75,17 @@ public final class App {
             int previousPosition = -1;
             for (Integer currentPosition : moves) {
                 if (previousPosition != -1) {
-                    int previousLine = previousPosition / level.width;
-                    int previousColumn = previousPosition % level.width;
+                    Level.Coordinate previousCoordinates = level.getCoordinate(previousPosition);
                     char direction = getDirection(level, previousPosition, currentPosition);
-                    map[previousLine][previousColumn] = direction;
+                    map[previousCoordinates.line][previousCoordinates.column] = direction;
                 }
                 previousPosition = currentPosition;
             }
-            int firstLine = moves.get(0) / level.width;
-            int firstColumn = moves.get(0) % level.width;
-            map[firstLine][firstColumn] = '□';
+            Level.Coordinate firstPositionCoordinates = level.getCoordinate(moves.get(0));
+            map[firstPositionCoordinates.line][firstPositionCoordinates.column] = '□';
 
-            int previousLine = previousPosition / level.width;
-            int previousColumn = previousPosition % level.width;
-            map[previousLine][previousColumn] = 'X';
+            Level.Coordinate previousPositionCoordinates = level.getCoordinate(previousPosition);
+            map[previousPositionCoordinates.line][previousPositionCoordinates.column] = 'X';
 
             for (char[] mapLine : map) {
                 content.add(new String(mapLine));
@@ -93,8 +94,7 @@ public final class App {
 
             previousPosition = -1;
             for (Integer currentPosition : moves) {
-                int currentLine = currentPosition / level.width;
-                int currentColumn = currentPosition % level.width;
+                Level.Coordinate currentCoordinates = level.getCoordinate(currentPosition);
                 StringBuilder currentText = new StringBuilder();
                 if (previousPosition == -1) {
                     currentText.append("Start at ");
@@ -102,12 +102,15 @@ public final class App {
                     char direction = getDirection(level, previousPosition, currentPosition);
                     currentText.append(direction).append(" ");
                 }
-                currentText.append("(").append(currentLine).append(",").append(currentColumn).append(")");
+                currentText.append("(").append(currentCoordinates.line).append(",").append(currentCoordinates.column).append(")");
 
+                if (previousPosition == -1) {
+                    currentText.append(" (").append(MapElement.TRUCK_TO_NAME.get(truck.type)).append(" truck)");
+                }
                 if (level.pickMap[currentPosition] != MapElement.EMPTY) {
-                    currentText.append(" maybe pick");
+                    currentText.append(" maybe pick a ").append(MapElement.PACKAGE_TO_NAME.get(level.pickMap[currentPosition])).append(" package");
                 } else if (level.unloadMap[currentPosition] != MapElement.EMPTY) {
-                    currentText.append(" unload");
+                    currentText.append(" unload a ").append(MapElement.PACKAGE_TO_NAME.get(level.unloadMap[currentPosition])).append(" package");
                 } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_ENABLED, level.elements[currentPosition]) >= 0) {
                     currentText.append(" click");
                 } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, level.elements[currentPosition]) >= 0) {

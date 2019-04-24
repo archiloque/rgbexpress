@@ -20,7 +20,7 @@ Run a specific level:
 java -jar target/rgbexpress-1.0-SNAPSHOT.jar levels/A/04
 ```
 
-## Elements to be used in maps
+## Elements to be used in maps:
 
 ```
 empty ' '
@@ -80,7 +80,7 @@ left right up ┴
 left right down ┬
 ```
 
-Short version :
+Compact version:
 ```
 ʙbB
 ɢgG
@@ -92,15 +92,13 @@ Short version :
 ᵒₒoO
 ⁱᵢiI
     
-┼
-
-─│
-
-┘└┐┌
-
-╴╶╵╷
-
-┤├┴┬
+    ╷  
+ ┌─┬┼┐ 
+ │ │││ 
+ ├─┼┼┤ 
+╶┼─┼┼┼╴
+ └─┴┼┘ 
+    ╵ 
 ```
  
 ## Contributing

@@ -103,7 +103,7 @@ Compact version:
  
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/archiloque/A WIP solver for the game RGB Express.
+Bug reports and pull requests are welcome on GitHub at https://github.com/archiloque/rgbexpress .
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License

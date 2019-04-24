@@ -16,34 +16,30 @@ final class Level {
     final int width;
 
     @NotNull
-    final
-    byte[] roads;
+    final byte[] roads;
 
     @NotNull
-    final
-    byte[] elements;
+    final byte[] elements;
 
     @NotNull
-    final
-    byte[] pickMap;
+    final byte[] pickMap;
 
     @NotNull
-    final
-    byte[] unloadMap;
+    final byte[] unloadMap;
 
     @NotNull
-    final
-    SwitchGroup[] switchGroups;
+    final SwitchGroup[] switchGroups;
 
     @NotNull
-    private
-    final List<LevelTruck> levelTrucks = new ArrayList<>();
+    private final List<LevelTruck> levelTrucks = new ArrayList<>();
+
+    @NotNull
+    final int[] bumpPositions;
 
     private final int packagesToPick;
 
     @NotNull
-    final
-    LinkedList<LevelState> states = new LinkedList<>();
+    final LinkedList<LevelState> states = new LinkedList<>();
 
     Level(int height, int width, @NotNull byte[] roads, @NotNull byte[] elements) {
         this.height = height;
@@ -61,9 +57,12 @@ final class Level {
         pickMap = new byte[levelSize];
         Arrays.fill(pickMap, MapElement.EMPTY);
 
+        List<Integer> bumpList = new ArrayList<>();
+
         List<Integer>[] disabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
         List<Integer>[] enabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
         List<Integer>[] switchedRoadPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
+
         for (int switchIndex = 0; switchIndex < MapElement.NUMBER_OF_SWITCH_TYPES; switchIndex++) {
             enabledSwitchPositionsList[switchIndex] = new ArrayList<>();
             disabledSwitchPositionsList[switchIndex] = new ArrayList<>();
@@ -102,12 +101,18 @@ final class Level {
                     throw new IllegalArgumentException("Switched road invalid");
                 }
                 roads[currentPosition] = switchedRoad;
+            } else if (currentElement == MapElement.BUMP) {
+                bumpList.add(currentPosition);
             }
         }
+
         if (packages != warehouses) {
             throw new IllegalArgumentException("Found " + packages + " packages but " + warehouses + " warehouses");
         }
 
+        bumpPositions = listToPrimitiveIntArray(bumpList);
+
+        // dealing with switches
         switchGroups = new SwitchGroup[MapElement.NUMBER_OF_SWITCH_TYPES];
         for (int switchIndex = 0; switchIndex < MapElement.NUMBER_OF_SWITCH_TYPES; switchIndex++) {
             List<Integer> enabledSwitchPositions = enabledSwitchPositionsList[switchIndex];
@@ -139,7 +144,9 @@ final class Level {
         }
     }
 
-    @NotNull LevelState createLevelState() {
+    void createInitStates() {
+        int levelSize = width * height;
+
         Truck[] trucks = new Truck[levelTrucks.size()];
         for (int i = 0; i < levelTrucks.size(); i++) {
             LevelTruck levelTruck = levelTrucks.get(i);
@@ -150,7 +157,7 @@ final class Level {
                     null,
                     null);
         }
-        byte[] switchMaps = new byte[width * height];
+        byte[] switchMaps = new byte[levelSize];
         Arrays.fill(switchMaps, (byte) -1);
         for (byte switchId = 0; switchId < MapElement.NUMBER_OF_SWITCH_TYPES; switchId++) {
             SwitchGroup switchGroup = switchGroups[switchId];
@@ -161,16 +168,49 @@ final class Level {
 
         boolean[] previousSwitchState = new boolean[MapElement.NUMBER_OF_SWITCH_TYPES];
         Arrays.fill(previousSwitchState, true);
-        LevelState levelState = new LevelState(
-                this,
-                packagesToPick,
-                roads,
-                pickMap,
-                unloadMap,
-                trucks,
-                switchMaps,
-                previousSwitchState);
-        return levelState;
+        if (bumpPositions.length == 0) {
+            boolean[] bumpsMap = new boolean[levelSize];
+            Arrays.fill(bumpsMap, false);
+
+            LevelState levelState = new LevelState(
+                    this,
+                    bumpsMap,
+                    packagesToPick,
+                    roads,
+                    pickMap,
+                    unloadMap,
+                    bumpsMap,
+                    trucks,
+                    switchMaps,
+                    previousSwitchState);
+            states.add(levelState);
+        } else {
+            int numberOfBumps = bumpPositions.length;
+            int numberOfPossibilities = (int) Math.pow(2, numberOfBumps);
+            for (int bumpCode = 0; bumpCode <= numberOfPossibilities; bumpCode++) {
+                boolean[] bumpsMap = new boolean[levelSize];
+                Arrays.fill(bumpsMap, false);
+                String bumpBinarystring = Integer.toBinaryString(bumpCode);
+                bumpBinarystring = String.format("%0" + numberOfBumps + "d", Integer.parseInt(bumpBinarystring));
+                for (int bumpIndex = 0; bumpIndex < numberOfBumps; bumpIndex++) {
+                    if (bumpBinarystring.charAt(bumpIndex) == '1') {
+                        bumpsMap[bumpPositions[bumpIndex]] = true;
+                    }
+                }
+                LevelState levelState = new LevelState(
+                        this,
+                        bumpsMap,
+                        packagesToPick,
+                        roads,
+                        pickMap,
+                        unloadMap,
+                        bumpsMap,
+                        trucks,
+                        switchMaps,
+                        previousSwitchState);
+                states.add(levelState);
+            }
+        }
     }
 
     @NotNull char[][] printMap(@NotNull byte[] roads) {
@@ -203,7 +243,7 @@ final class Level {
         }
     }
 
-    static @NotNull int[] listToPrimitiveIntArray(@NotNull List<Integer> list) {
+    private static @NotNull int[] listToPrimitiveIntArray(@NotNull List<Integer> list) {
         int[] result = new int[list.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = list.get(i);

@@ -1,0 +1,78 @@
+Bump at (2, 2) is disabled
+Bump at (2, 4) is enabled
+Bump at (2, 6) is disabled
+Bump at (2, 8) is disabled
+
+↓←← ┌─┐ ┌─┐
+↓ ↑ │ │ │ │
+→→→→→→→→→X┘
+  ↑ │ │ │  
+ →↑─┘ └─┴┐ 
+ ↑       │ 
+ ↑       │ 
+ ↑       │ 
+ ↑       │ 
+ ↑       │ 
+ □      ╶┘ 
+
+Start at (10,1) (red truck)
+↑ (9,1)
+↑ (8,1)
+↑ (7,1)
+↑ (6,1)
+↑ (5,1)
+↑ (4,1)
+→ (4,2)
+↑ (3,2)
+↑ (2,2) maybe bump a package or pick one
+↑ (1,2) maybe pick a red package
+↑ (0,2)
+← (0,1)
+← (0,0)
+↓ (1,0) maybe pick a red package
+↓ (2,0)
+→ (2,1) unload a red package
+→ (2,2) maybe bump a package or pick one
+→ (2,3)
+→ (2,4) maybe bump a package or pick one
+→ (2,5) unload a red package
+→ (2,6) maybe bump a package or pick one
+→ (2,7)
+→ (2,8) maybe bump a package or pick one
+→ (2,9) unload a red package
+
+┌─┐ ↓←← ┌─┐
+│ │ ↓ ↑ │ │
+└─┼─↓─↑─┼─┘
+  │ ↓ ↑ │  
+ ┌┴X← ↑←←← 
+ │       ↑ 
+ │       ↑ 
+ │       ↑ 
+ │       ↑ 
+ │       ↑ 
+ ╵      □↑ 
+
+Start at (10,8) (yellow truck)
+→ (10,9)
+↑ (9,9)
+↑ (8,9)
+↑ (7,9)
+↑ (6,9)
+↑ (5,9) maybe pick a yellow package
+↑ (4,9) maybe pick a yellow package
+← (4,8)
+← (4,7) unload a yellow package
+← (4,6) maybe pick a red package
+↑ (3,6)
+↑ (2,6) maybe bump a package or pick one
+↑ (1,6)
+↑ (0,6)
+← (0,5)
+← (0,4)
+↓ (1,4)
+↓ (2,4) maybe bump a package or pick one
+↓ (3,4)
+↓ (4,4)
+← (4,3) unload a yellow package
+

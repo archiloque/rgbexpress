@@ -1,0 +1,49 @@
+Bump at (5, 4) is enabled
+
+          
+    ╷     
+    │     
+    │     
+    │     
+→→→→→→→→→X
+↑   │     
+↑   │     
+↑   │     
+□   ╵     
+
+Start at (9,0) (yellow truck)
+↑ (8,0)
+↑ (7,0)
+↑ (6,0)
+↑ (5,0)
+→ (5,1)
+→ (5,2)
+→ (5,3)
+→ (5,4)
+→ (5,5)
+→ (5,6)
+→ (5,7)
+→ (5,8)
+→ (5,9) unload a yellow package
+
+          
+    X     
+    ↑     
+    ↑     
+    ↑     
+┌───↑────╴
+│   ↑     
+│   ↑     
+│   ↑     
+╵   □     
+
+Start at (9,4) (red truck)
+↑ (8,4)
+↑ (7,4) maybe pick a yellow package
+↑ (6,4)
+↑ (5,4)
+↑ (4,4)
+↑ (3,4) maybe pick a red package
+↑ (2,4)
+↑ (1,4) unload a red package
+

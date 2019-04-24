@@ -12,68 +12,83 @@ final class LevelState {
     /**
      * The current level
      */
-    private final @NotNull
-    Level level;
+    @NotNull
+    private final Level level;
+
+    /**
+     * Starting bump map
+     */
+    @NotNull
+    final boolean[] initialBumpMap;
 
     /**
      * Number of unprocessed cargos
      */
-    private final
-    int previousNumberOfUnprocessedCargos;
+    private final int previousNumberOfUnprocessedCargos;
 
     /**
      * Maps of the road as {@link RoadElement}
      */
-    private final @NotNull
-    byte[] previousRoadMaps;
+    @NotNull
+    private final byte[] previousRoadMaps;
 
     /**
      * Map of the packages to pick
      */
-    private final @NotNull
-    byte[] previousPickMap;
+    @NotNull
+    private final byte[] previousPickMap;
 
     /**
      * Map of the warehouse drop points, designed by their package
      */
-    private final @NotNull
-    byte[] previousUnloadMap;
+    @NotNull
+    private final byte[] previousUnloadMap;
+
+    /**
+     * Map of the bumps
+     */
+    @NotNull
+    private final boolean[] previousBumpMap;
 
     /**
      * Current trucks
      */
-    private final @NotNull
-    Truck[] currentTrucks;
+    @NotNull
+    private final Truck[] currentTrucks;
 
     /**
      * Map of the enabled switches, containing the id of the switch or -1 if not switch
      */
-    private final @NotNull
-    byte[] previousSwitchMap;
+    @NotNull
+    private final byte[] previousSwitchMap;
 
     /**
      * The switch status per if of the switch (are they enabled or disabled)
      */
-    private final @NotNull
-    boolean[] previousSwitchState;
+    @NotNull
+    private final boolean[] previousSwitchState;
 
     private static final boolean LOG = "true".equals(System.getenv("LOG"));
 
     LevelState(
             final @NotNull Level level,
+            final @NotNull boolean[] initialBumpMap,
             final int previousNumberOfUnprocessedCargos,
             final @NotNull byte[] previousRoadMaps,
             final @NotNull byte[] previousPickMap,
             final @NotNull byte[] previousUnloadMap,
+            final @NotNull boolean[] previousBumpMap,
             final @NotNull Truck[] currentTrucks,
             final @NotNull byte[] previousSwitchMap,
             final @NotNull boolean[] previousSwitchState
     ) {
+        this.initialBumpMap = initialBumpMap;
         this.level = level;
         this.previousNumberOfUnprocessedCargos = previousNumberOfUnprocessedCargos;
         this.previousRoadMaps = previousRoadMaps;
         this.previousUnloadMap = previousUnloadMap;
         this.previousPickMap = previousPickMap;
+        this.previousBumpMap = previousBumpMap;
         this.currentTrucks = currentTrucks;
         this.previousSwitchMap = previousSwitchMap;
         this.previousSwitchState = previousSwitchState;
@@ -92,6 +107,7 @@ final class LevelState {
                 previousRoadMaps,
                 previousPickMap,
                 previousUnloadMap,
+                previousBumpMap,
                 previousSwitchMap,
                 previousSwitchState,
                 null,
@@ -106,6 +122,7 @@ final class LevelState {
             final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
@@ -120,6 +137,7 @@ final class LevelState {
                     nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextBumpMap,
                     nextSwitchMap,
                     nextSwitchState,
                     forbiddenLocations,
@@ -133,6 +151,7 @@ final class LevelState {
                     nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextBumpMap,
                     nextSwitchMap,
                     nextSwitchState,
                     forbiddenLocations,
@@ -148,6 +167,7 @@ final class LevelState {
             final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
@@ -162,6 +182,7 @@ final class LevelState {
                 nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations,
@@ -180,6 +201,7 @@ final class LevelState {
                 nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations,
@@ -198,6 +220,7 @@ final class LevelState {
                 nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations,
@@ -216,6 +239,7 @@ final class LevelState {
                 nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations,
@@ -234,6 +258,7 @@ final class LevelState {
                 nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations,
@@ -250,6 +275,7 @@ final class LevelState {
             final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
@@ -272,6 +298,7 @@ final class LevelState {
                     nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextBumpMap,
                     nextSwitchMap,
                     nextSwitchState,
                     forbiddenLocations,
@@ -290,6 +317,7 @@ final class LevelState {
             final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement nextForbiddenLocations,
@@ -328,6 +356,7 @@ final class LevelState {
         int nextNextNumberOfUnprocessedCargos = nextNumberOfUnprocessedCargos;
         @NotNull byte[] nextNextPickMap = nextPickMap;
         @NotNull byte[] nextNextUnloadMap = nextUnloadMap;
+        @NotNull boolean[] nextNextBumpMap = nextBumpMap;
 
         byte elementToUnload = nextNextUnloadMap[targetPosition];
         if (elementToUnload != MapElement.EMPTY) {
@@ -351,7 +380,7 @@ final class LevelState {
 
             if (!MapElement.CAN_UNLOAD[newTruck.type][elementToUnload]) {
                 if (LOG) {
-                    System.out.println("Can't go there because the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " cargo can't be unload by a " + MapElement.TRUCK_TO_NAME.get(newTruck.type) +" truck");
+                    System.out.println("Can't go there because the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " cargo can't be unload by a " + MapElement.TRUCK_TO_NAME.get(newTruck.type) + " truck");
                 }
                 return null;
             }
@@ -403,6 +432,35 @@ final class LevelState {
                     if (LOG) {
                         System.out.println("Load a cargo");
                     }
+                }
+            } else {
+                if (nextNextBumpMap[targetPosition]) {
+                    if (LOG) {
+                        System.out.println("On a bump");
+                    }
+                    if (newTruck.cargo == null) {
+                        // no cargo on a space we should unload one => stop
+                        if (LOG) {
+                            System.out.println("Can't go there because we should unload a cargo and we don't have any");
+                        }
+                        return null;
+                    }
+                    // update the truck
+                    byte cargo = newTruck.cargo.element;
+                    newTruck.cargo = newTruck.cargo.previous;
+
+                    if (LOG) {
+                        System.out.println("Unload a " + MapElement.PACKAGE_TO_NAME.get(cargo) + " cargo");
+                    }
+
+                    // remove the bump
+                    nextNextBumpMap = Arrays.copyOf(nextNextBumpMap, nextNextBumpMap.length);
+                    nextNextBumpMap[targetPosition] = false;
+
+
+                    // set the cargo on the map
+                    nextNextPickMap = Arrays.copyOf(nextNextPickMap, nextNextPickMap.length);
+                    nextNextPickMap[targetPosition] = cargo;
                 }
             }
         }
@@ -488,6 +546,7 @@ final class LevelState {
                 nextNextRoads,
                 nextNextPickMap,
                 nextNextUnloadMap,
+                nextNextBumpMap,
                 nextNextSwitchMap,
                 nextSwitchState,
                 nextNextForbiddenLocations,
@@ -502,6 +561,7 @@ final class LevelState {
             final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
@@ -521,6 +581,7 @@ final class LevelState {
                 nextRoadMap,
                 nextPickMap,
                 nextUnloadMap,
+                nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations,
@@ -536,6 +597,7 @@ final class LevelState {
             final @NotNull byte[] nextRoadMap,
             final @NotNull byte[] nextPickMap,
             final @NotNull byte[] nextUnloadMap,
+            final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
@@ -552,10 +614,12 @@ final class LevelState {
                 if (checkForbiddenLocations(nextTrucks, forbiddenLocations)) {
                     level.states.add(new LevelState(
                             level,
+                            initialBumpMap,
                             nextNumberOfUnprocessedCargos,
                             nextRoadMap,
                             nextPickMap,
                             nextUnloadMap,
+                            nextBumpMap,
                             nextNextTrucks,
                             nextSwitchMap,
                             nextSwitchState
@@ -572,6 +636,7 @@ final class LevelState {
                     nextRoadMap,
                     nextPickMap,
                     nextUnloadMap,
+                    nextBumpMap,
                     nextSwitchMap,
                     nextSwitchState,
                     forbiddenLocations,

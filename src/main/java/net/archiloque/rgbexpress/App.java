@@ -42,7 +42,7 @@ public final class App {
 
         print(path, "Solving level");
         long startTime = System.nanoTime();
-        level.states.add(level.createLevelState());
+        level.createInitStates();
         Truck[] solution = null;
         while ((solution == null) && (!level.states.isEmpty())) {
             LevelState nextCandidate = level.states.pop();
@@ -50,7 +50,7 @@ public final class App {
             if (solution != null) {
                 long stopTime = System.nanoTime();
                 print(path, "Solved in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString());
-                printSolution(solutionFile, level, solution);
+                printSolution(solutionFile, level, nextCandidate, solution);
             }
         }
         if (solution == null) {
@@ -59,8 +59,22 @@ public final class App {
         }
     }
 
-    private static void printSolution(@NotNull Path solutionFile, @NotNull Level level, @NotNull Truck[] solution) throws IOException {
+    private static void printSolution(
+            @NotNull Path solutionFile,
+            @NotNull Level level,
+            @NotNull LevelState levelState,
+            @NotNull Truck[] solution) throws IOException {
         List<String> content = new ArrayList<>();
+
+        if(level.bumpPositions.length != 0) {
+            for (int bumpPosition : level.bumpPositions) {
+                boolean bumpEnabled = levelState.initialBumpMap[bumpPosition];
+                Level.Coordinate coordinate = level.getCoordinate(bumpPosition);
+                content.add("Bump at (" + coordinate.line + ", " + coordinate.column + ") is " + (bumpEnabled ? "enabled" : "disabled"));
+            }
+            content.add("");
+        }
+
         for (Truck truck : solution) {
             List<Integer> moves = new ArrayList<>();
             moves.add(truck.currentPosition);
@@ -102,7 +116,12 @@ public final class App {
                     char direction = getDirection(level, previousPosition, currentPosition);
                     currentText.append(direction).append(" ");
                 }
-                currentText.append("(").append(currentCoordinates.line).append(",").append(currentCoordinates.column).append(")");
+                currentText.
+                        append("(").
+                        append(currentCoordinates.line).
+                        append(",").
+                        append(currentCoordinates.column).
+                        append(")");
 
                 if (previousPosition == -1) {
                     currentText.append(" (").append(MapElement.TRUCK_TO_NAME.get(truck.type)).append(" truck)");
@@ -115,6 +134,8 @@ public final class App {
                     currentText.append(" click");
                 } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, level.elements[currentPosition]) >= 0) {
                     currentText.append(" click");
+                } else if(Arrays.binarySearch(level.bumpPositions, currentPosition) >= 0) {
+                    currentText.append(" maybe bump a package or pick one");
                 }
                 previousPosition = currentPosition;
                 content.add(currentText.toString());

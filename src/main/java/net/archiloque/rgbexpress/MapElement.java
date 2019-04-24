@@ -49,6 +49,8 @@ final class MapElement {
     private static final char SWITCH_4_ROAD_OPEN_CHAR = 'i';
     private static final char SWITCH_4_ROAD_CLOSED_CHAR = 'I';
 
+    private static final char BUMP_CHAR = '○';
+
     static final byte EMPTY = 0;
 
     private static final byte RED_TRUCK = EMPTY + 1;
@@ -70,7 +72,7 @@ final class MapElement {
     private static final byte WHITE_TRUCK = YELLOW_WAREHOUSE + 1;
 
     private static final byte SWITCH_1_BUTTON_ENABLED = WHITE_TRUCK + 1;
-    private static final byte SWITCH_1_BUTTON_DISABLED= SWITCH_1_BUTTON_ENABLED + 1;
+    private static final byte SWITCH_1_BUTTON_DISABLED = SWITCH_1_BUTTON_ENABLED + 1;
     private static final byte SWITCH_1_ROAD_OPEN = SWITCH_1_BUTTON_DISABLED + 1;
     private static final byte SWITCH_1_ROAD_CLOSED = SWITCH_1_ROAD_OPEN + 1;
 
@@ -88,6 +90,8 @@ final class MapElement {
     private static final byte SWITCH_4_BUTTON_DISABLED = SWITCH_4_BUTTON_ENABLED + 1;
     private static final byte SWITCH_4_ROAD_OPEN = SWITCH_4_BUTTON_DISABLED + 1;
     private static final byte SWITCH_4_ROAD_CLOSED = SWITCH_4_ROAD_OPEN + 1;
+
+    static final byte BUMP = SWITCH_4_ROAD_CLOSED + 1;
 
     static final int NUMBER_OF_SWITCH_TYPES = 4;
 
@@ -131,6 +135,8 @@ final class MapElement {
             SWITCH_4_BUTTON_DISABLED_CHAR,
             SWITCH_4_ROAD_OPEN_CHAR,
             SWITCH_4_ROAD_CLOSED_CHAR,
+
+            BUMP_CHAR,
     };
 
     static final Map<Character, Byte> CHAR_TO_BYTE = new HashMap<>(ALL_ELEMENTS.length);

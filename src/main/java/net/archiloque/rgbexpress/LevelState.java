@@ -450,13 +450,12 @@ final class LevelState {
                     newTruck.cargo = newTruck.cargo.previous;
 
                     if (LOG) {
-                        System.out.println("Unload a " + MapElement.PACKAGE_TO_NAME.get(cargo) + " cargo");
+                        System.out.println("Unload a " + MapElement.PACKAGE_TO_NAME.get(cargo) + " cargo because of a bump");
                     }
 
                     // remove the bump
                     nextNextBumpMap = Arrays.copyOf(nextNextBumpMap, nextNextBumpMap.length);
                     nextNextBumpMap[targetPosition] = false;
-
 
                     // set the cargo on the map
                     nextNextPickMap = Arrays.copyOf(nextNextPickMap, nextNextPickMap.length);

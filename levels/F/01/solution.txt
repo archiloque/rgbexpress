@@ -19,7 +19,7 @@ Start at (9,0) (yellow truck)
 → (5,1)
 → (5,2)
 → (5,3)
-→ (5,4)
+→ (5,4) maybe bump a package or pick one
 → (5,5)
 → (5,6)
 → (5,7)
@@ -41,7 +41,7 @@ Start at (9,4) (red truck)
 ↑ (8,4)
 ↑ (7,4) maybe pick a yellow package
 ↑ (6,4)
-↑ (5,4)
+↑ (5,4) maybe bump a package or pick one
 ↑ (4,4)
 ↑ (3,4) maybe pick a red package
 ↑ (2,4)

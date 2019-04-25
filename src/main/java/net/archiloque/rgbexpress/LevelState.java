@@ -33,13 +33,13 @@ final class LevelState {
     private final byte[] previousRoadMaps;
 
     /**
-     * Map of the packages to pick
+     * Map of the packages to pick, designed by their package as {@link MapElement
      */
     @NotNull
     private final byte[] previousPickMap;
 
     /**
-     * Map of the warehouse drop points, designed by their package
+     * Map of the warehouse drop points, designed by their package as {@link MapElement}
      */
     @NotNull
     private final byte[] previousUnloadMap;

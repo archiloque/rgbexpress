@@ -63,6 +63,8 @@ switch 4 button disabled ᵢ
 switch 4 road open i
 switch 4 road closed I
 
+bump ○
+
 crossing ┼
 left right ─
 up down │
@@ -91,6 +93,7 @@ Compact version:
 ᵛᵥvV
 ᵒₒoO
 ⁱᵢiI
+○
     
     ╷  
  ┌─┬┼┐ 

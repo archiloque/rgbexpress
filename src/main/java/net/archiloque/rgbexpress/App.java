@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,14 +34,14 @@ public final class App {
     }
 
     private static void processLevel(@NotNull Path path) throws IOException {
-        print(path, "Reading level");
+        print(path, "Reading level", false);
         Level level = LevelReader.readLevel(path);
         Path solutionFile = path.resolve("solution.txt");
         if (Files.exists(solutionFile)) {
             Files.delete(solutionFile);
         }
 
-        print(path, "Solving level");
+        print(path, "Solving level", false);
         long startTime = System.nanoTime();
         level.createInitStates();
         Truck[] solution = null;
@@ -49,13 +50,13 @@ public final class App {
             solution = nextCandidate.processState();
             if (solution != null) {
                 long stopTime = System.nanoTime();
-                print(path, "Solved in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString());
+                print(path, "Solved in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString(), false);
                 printSolution(solutionFile, level, nextCandidate, solution);
             }
         }
         if (solution == null) {
             long stopTime = System.nanoTime();
-            print(path, "Failed in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString());
+            print(path, "Failed in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString(), true);
         }
     }
 
@@ -176,8 +177,9 @@ public final class App {
         }
     }
 
-    private static void print(@NotNull Path path, @NotNull String message) {
-        System.out.println(DATE_FORMAT.format(new Date()) + " " + path.toAbsolutePath() + " " + message);
+    private static void print(@NotNull Path path, @NotNull String message, boolean error) {
+        PrintStream stream = error ? System.err : System.out;
+        stream.println(DATE_FORMAT.format(new Date()) + " " + path.toAbsolutePath() + " " + message);
     }
 
 }

@@ -683,5 +683,4 @@ final class LevelState {
         throw new IllegalArgumentException("Woops for (" + coordinate.line + ", " + coordinate.column + ")");
     }
 
-
 }

@@ -115,6 +115,11 @@ final class LevelState {
         );
     }
 
+    /**
+     * Function to be called recursively on each {@link Truck}
+     *
+     * @return a Truck[] if we find a winning solution
+     */
     private @Nullable Truck[] processTruck(
             final int truckIndex,
             final @NotNull Truck[] nextTrucks,
@@ -520,11 +525,11 @@ final class LevelState {
                     nextNextForbiddenLocations = new IntegerListElement(enabledSwitch, nextNextForbiddenLocations);
                 }
             }
-            boolean currentStatus = nextNextSwitchState[switchId];
+            boolean currentSwitchStatus = nextNextSwitchState[switchId];
 
             nextNextSwitchMap = Arrays.copyOf(nextNextSwitchMap, nextNextSwitchMap.length);
-            int[] switchesToEnable = currentStatus ? switchGroup.disabledSwitches : switchGroup.enabledSwitches;
-            int[] switchesToDisable = currentStatus ? switchGroup.enabledSwitches : switchGroup.disabledSwitches;
+            int[] switchesToEnable = currentSwitchStatus ? switchGroup.disabledSwitches : switchGroup.enabledSwitches;
+            int[] switchesToDisable = currentSwitchStatus ? switchGroup.enabledSwitches : switchGroup.disabledSwitches;
 
             for (int switchPosition : switchesToEnable) {
                 nextNextSwitchMap[switchPosition] = switchId;
@@ -534,7 +539,7 @@ final class LevelState {
             }
 
             nextNextSwitchState = Arrays.copyOf(nextNextSwitchState, MapElement.NUMBER_OF_SWITCH_TYPES);
-            nextNextSwitchState[switchId] = !currentStatus;
+            nextNextSwitchState[switchId] = !currentSwitchStatus;
         }
 
         return endProcessTruck(

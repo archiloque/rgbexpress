@@ -52,24 +52,24 @@ final class MapElement {
     private static final char BUMP_CHAR = '○';
 
     static final byte EMPTY = 0;
-    private static final byte RED_PACKAGE = EMPTY + 1;
-    private static final byte GREEN_PACKAGE = RED_PACKAGE + 1;
-    private static final byte BLUE_PACKAGE = GREEN_PACKAGE + 1;
-    private static final byte YELLOW_PACKAGE = BLUE_PACKAGE + 1;
+    static final byte RED_PACKAGE = EMPTY + 1;
+    static final byte GREEN_PACKAGE = RED_PACKAGE + 1;
+    static final byte BLUE_PACKAGE = GREEN_PACKAGE + 1;
+    static final byte YELLOW_PACKAGE = BLUE_PACKAGE + 1;
 
-    private static final byte RED_TRUCK = YELLOW_PACKAGE + 1;
+    static final byte RED_TRUCK = YELLOW_PACKAGE + 1;
     private static final byte RED_WAREHOUSE = RED_TRUCK + 1;
 
-    private static final byte GREEN_TRUCK = RED_WAREHOUSE + 1;
+    static final byte GREEN_TRUCK = RED_WAREHOUSE + 1;
     private static final byte GREEN_WAREHOUSE = GREEN_TRUCK + 1;
 
-    private static final byte BLUE_TRUCK = GREEN_WAREHOUSE + 1;
+    static final byte BLUE_TRUCK = GREEN_WAREHOUSE + 1;
     private static final byte BLUE_WAREHOUSE = BLUE_TRUCK + 1;
 
-    private static final byte YELLOW_TRUCK = BLUE_WAREHOUSE + 1;
+    static final byte YELLOW_TRUCK = BLUE_WAREHOUSE + 1;
     private static final byte YELLOW_WAREHOUSE = YELLOW_TRUCK + 1;
 
-    private static final byte WHITE_TRUCK = YELLOW_WAREHOUSE + 1;
+    static final byte WHITE_TRUCK = YELLOW_WAREHOUSE + 1;
 
     private static final byte SWITCH_1_BUTTON_ENABLED = WHITE_TRUCK + 1;
     private static final byte SWITCH_1_BUTTON_DISABLED = SWITCH_1_BUTTON_ENABLED + 1;
@@ -94,6 +94,12 @@ final class MapElement {
     static final byte BUMP = SWITCH_4_ROAD_CLOSED + 1;
 
     static final int NUMBER_OF_SWITCH_TYPES = 4;
+
+    static final byte BYTE_SIZE = 8;
+    static final byte RED_SHIFT = 0;
+    static final byte GREEN_SHIFT = RED_SHIFT + BYTE_SIZE;
+    static final byte BLUE_SHIFT = GREEN_SHIFT + BYTE_SIZE;
+    static final byte YELLOW_SHIFT = BLUE_SHIFT + BYTE_SIZE;
 
     static final char[] ALL_ELEMENTS = new char[]{
             EMPTY_CHAR,
@@ -196,6 +202,13 @@ final class MapElement {
     static final boolean[][] CAN_UNLOAD = new boolean[ALL_ELEMENTS.length][];
     static final Map<Byte, String> PACKAGE_TO_NAME = new HashMap<>();
     static final Map<Byte, String> TRUCK_TO_NAME = new HashMap<>();
+    static final byte[] SHIFT_PER_PACKAGE = new byte[]{
+            -1,
+            RED_SHIFT,
+            GREEN_SHIFT,
+            BLUE_SHIFT,
+            YELLOW_SHIFT,
+    };
 
     static {
         for (byte i = 0; i < ALL_ELEMENTS.length; i++) {

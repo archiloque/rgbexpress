@@ -63,8 +63,8 @@ final class Level {
     @NotNull
     final short[] bumpPositions;
 
-    private final byte packagesToPick;
-
+    private final byte numberOfPackagesToPick;
+    private final int numberOfPackagesToPickPerPackages;
 
     @NotNull
     final LinkedList<AbstractLevelState> states = new LinkedList<>();
@@ -78,7 +78,8 @@ final class Level {
         size = (short) (width * height);
 
         byte packages = 0;
-        int warehouses = 0;
+        byte warehouses = 0;
+        int packagesToPickPerPackages = 0;
 
         unloadMap = new byte[size];
         Arrays.fill(unloadMap, MapElement.EMPTY);
@@ -116,6 +117,7 @@ final class Level {
                 pickMap[currentPosition] = currentElement;
                 packages += 1;
                 possiblePickMapList.add(currentPosition);
+                packagesToPickPerPackages += (1 << MapElement.SHIFT_PER_PACKAGE[currentElement]);
             } else if (Arrays.binarySearch(MapElement.WAREHOUSES, currentElement) >= 0) {
                 isReachable(currentPosition + width);
                 unloadMap[currentPosition + width] = MapElement.WAREHOUSE_TO_PACKAGES.get(currentElement);
@@ -182,7 +184,8 @@ final class Level {
             switchGroups[switchIndex] = switchGroup;
         }
 
-        packagesToPick = packages;
+        numberOfPackagesToPick = packages;
+        numberOfPackagesToPickPerPackages = packagesToPickPerPackages;
 
         pickSmallMapIndexes = new byte[size];
         initialPickSmallMap = new byte[possiblePickMapList.size()];
@@ -234,7 +237,7 @@ final class Level {
         if ((numberOfSwitches == 0) && (bumpPositions.length == 0)) {
             LevelState levelState = new LevelState(
                     this,
-                    packagesToPick,
+                    numberOfPackagesToPickPerPackages,
                     initialRoadsSmallMap,
                     initialPickSmallMap,
                     initialUnloadSmallMap,
@@ -262,7 +265,7 @@ final class Level {
             FullLevelState levelState = new FullLevelState(
                     this,
                     bumpsMap,
-                    packagesToPick,
+                    numberOfPackagesToPickPerPackages,
                     initialRoadsSmallMap,
                     initialPickSmallMap,
                     initialUnloadSmallMap,
@@ -287,7 +290,7 @@ final class Level {
                 FullLevelState levelState = new FullLevelState(
                         this,
                         bumpsMap,
-                        packagesToPick,
+                        numberOfPackagesToPickPerPackages,
                         initialRoadsSmallMap,
                         initialPickSmallMap,
                         initialUnloadSmallMap,

@@ -11,12 +11,22 @@ import java.util.List;
  */
 final class Level {
 
-    private final int height;
+    private final byte height;
 
-    final int width;
+    final byte width;
+
+    final short size;
+
+    final int numberOfTrucks;
 
     @NotNull
-    final byte[] roads;
+    final byte[] roadsMap;
+
+    @NotNull
+    private final byte[] initialRoadsSmallMap;
+
+    @NotNull
+    final byte[] roadsSmallMapIndexes;
 
     @NotNull
     final byte[] elements;
@@ -28,40 +38,62 @@ final class Level {
     final byte[] unloadMap;
 
     @NotNull
+    final byte[] pickSmallMapIndexes;
+
+    @NotNull
+    private final byte[] initialPickSmallMap;
+
+    @NotNull
+    final byte[] unloadSmallMapIndexes;
+
+    @NotNull
+    private final byte[] initialUnloadSmallMap;
+
+    @NotNull
     final SwitchGroup[] switchGroups;
 
-    @NotNull
-    private final List<LevelTruck> levelTrucks = new ArrayList<>();
+    private int numberOfSwitches;
 
     @NotNull
-    final int[] bumpPositions;
-
-    private final int packagesToPick;
+    private List<LevelTruck> levelTrucks = new ArrayList<>();
 
     @NotNull
-    final LinkedList<LevelState> states = new LinkedList<>();
+    byte[] trucksTypes;
 
-    Level(int height, int width, @NotNull byte[] roads, @NotNull byte[] elements) {
+    @NotNull
+    final short[] bumpPositions;
+
+    private final byte packagesToPick;
+
+
+    @NotNull
+    final LinkedList<AbstractLevelState> states = new LinkedList<>();
+
+    Level(byte height, byte width, @NotNull byte[] roadsMap, @NotNull byte[] elements) {
         this.height = height;
         this.width = width;
-        this.roads = roads;
+        this.roadsMap = roadsMap;
         this.elements = elements;
 
-        int levelSize = width * height;
+        size = (short) (width * height);
 
-        int packages = 0;
+        byte packages = 0;
         int warehouses = 0;
 
-        unloadMap = new byte[levelSize];
+        unloadMap = new byte[size];
         Arrays.fill(unloadMap, MapElement.EMPTY);
-        pickMap = new byte[levelSize];
+        pickMap = new byte[size];
         Arrays.fill(pickMap, MapElement.EMPTY);
 
-        List<Integer> bumpList = new ArrayList<>();
+        List<Short> possiblePickMapList = new ArrayList<>();
+        List<Short> possibleUnloadMapList = new ArrayList<>();
+        List<Short> roadMapList = new ArrayList<>();
 
-        List<Integer>[] disabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
-        List<Integer>[] enabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
-        List<Integer>[] switchedRoadPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
+        List<Short> bumpList = new ArrayList<>();
+
+        List<Short>[] disabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
+        List<Short>[] enabledSwitchPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
+        List<Short>[] switchedRoadPositionsList = new List[MapElement.NUMBER_OF_SWITCH_TYPES];
 
         for (int switchIndex = 0; switchIndex < MapElement.NUMBER_OF_SWITCH_TYPES; switchIndex++) {
             enabledSwitchPositionsList[switchIndex] = new ArrayList<>();
@@ -69,7 +101,12 @@ final class Level {
             switchedRoadPositionsList[switchIndex] = new ArrayList<>();
         }
 
-        for (int currentPosition = 0; currentPosition < height * width; currentPosition++) {
+        for (short currentPosition = 0; currentPosition < height * width; currentPosition++) {
+            byte currentRoad = roadsMap[currentPosition];
+            if (currentRoad != RoadElement.EMPTY) {
+                roadMapList.add(currentPosition);
+            }
+
             byte currentElement = elements[currentPosition];
             if (Arrays.binarySearch(MapElement.TRUCKS, currentElement) >= 0) {
                 isReachable(currentPosition);
@@ -78,17 +115,20 @@ final class Level {
                 isReachable(currentPosition);
                 pickMap[currentPosition] = currentElement;
                 packages += 1;
+                possiblePickMapList.add(currentPosition);
             } else if (Arrays.binarySearch(MapElement.WAREHOUSES, currentElement) >= 0) {
                 isReachable(currentPosition + width);
                 unloadMap[currentPosition + width] = MapElement.WAREHOUSE_TO_PACKAGES.get(currentElement);
                 warehouses += 1;
-
+                possibleUnloadMapList.add((short) (currentPosition + width));
             } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_ENABLED, currentElement) >= 0) {
                 int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_ENABLED, currentElement);
                 enabledSwitchPositionsList[switchIndex].add(currentPosition);
+                numberOfSwitches += 1;
             } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, currentElement) >= 0) {
                 int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, currentElement);
                 disabledSwitchPositionsList[switchIndex].add(currentPosition);
+                numberOfSwitches += 1;
             } else if (Arrays.binarySearch(MapElement.SWITCHES_ROAD_OPEN, currentElement) >= 0) {
                 int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_ROAD_OPEN, currentElement);
                 switchedRoadPositionsList[switchIndex].add(currentPosition);
@@ -96,13 +136,15 @@ final class Level {
                 int switchIndex = Arrays.binarySearch(MapElement.SWITCHES_ROAD_CLOSED, currentElement);
                 switchedRoadPositionsList[switchIndex].add(currentPosition);
 
-                byte switchedRoad = RoadElement.SWITCHED_ELEMENT[roads[currentPosition]];
+                byte switchedRoad = RoadElement.SWITCHED_ELEMENT[roadsMap[currentPosition]];
                 if (switchedRoad == RoadElement.ERROR) {
                     throw new IllegalArgumentException("Switched road invalid");
                 }
-                roads[currentPosition] = switchedRoad;
+                roadsMap[currentPosition] = switchedRoad;
             } else if (currentElement == MapElement.BUMP) {
                 bumpList.add(currentPosition);
+                possiblePickMapList.add(currentPosition);
+                possibleUnloadMapList.add(currentPosition);
             }
         }
 
@@ -110,14 +152,20 @@ final class Level {
             throw new IllegalArgumentException("Found " + packages + " packages but " + warehouses + " warehouses");
         }
 
-        bumpPositions = listToPrimitiveIntArray(bumpList);
+        numberOfTrucks = levelTrucks.size();
+        trucksTypes = new byte[numberOfTrucks];
+        for (int truckIndex = 0; truckIndex < numberOfTrucks; truckIndex++) {
+            trucksTypes[truckIndex] = levelTrucks.get(truckIndex).type;
+        }
+
+        bumpPositions = listToPrimitiveShortArray(bumpList);
 
         // dealing with switches
         switchGroups = new SwitchGroup[MapElement.NUMBER_OF_SWITCH_TYPES];
         for (int switchIndex = 0; switchIndex < MapElement.NUMBER_OF_SWITCH_TYPES; switchIndex++) {
-            List<Integer> enabledSwitchPositions = enabledSwitchPositionsList[switchIndex];
-            List<Integer> disabledSwitchPositions = disabledSwitchPositionsList[switchIndex];
-            List<Integer> switchedRoadPositions = switchedRoadPositionsList[switchIndex];
+            List<Short> enabledSwitchPositions = enabledSwitchPositionsList[switchIndex];
+            List<Short> disabledSwitchPositions = disabledSwitchPositionsList[switchIndex];
+            List<Short> switchedRoadPositions = switchedRoadPositionsList[switchIndex];
             if (enabledSwitchPositions.isEmpty()) {
                 if (!disabledSwitchPositions.isEmpty()) {
                     throw new IllegalArgumentException("Found a disabled switch but no enabled switch");
@@ -128,36 +176,75 @@ final class Level {
                 throw new IllegalArgumentException("Found a switch but no switched road ");
             }
             SwitchGroup switchGroup = new SwitchGroup(
-                    listToPrimitiveIntArray(switchedRoadPositions),
-                    listToPrimitiveIntArray(enabledSwitchPositions),
-                    listToPrimitiveIntArray(disabledSwitchPositions));
+                    listToPrimitiveShortArray(switchedRoadPositions),
+                    listToPrimitiveShortArray(enabledSwitchPositions),
+                    listToPrimitiveShortArray(disabledSwitchPositions));
             switchGroups[switchIndex] = switchGroup;
         }
 
         packagesToPick = packages;
+
+        pickSmallMapIndexes = new byte[size];
+        initialPickSmallMap = new byte[possiblePickMapList.size()];
+        createSmallMap(possiblePickMapList, pickSmallMapIndexes, initialPickSmallMap, pickMap);
+
+        unloadSmallMapIndexes = new byte[size];
+        initialUnloadSmallMap = new byte[possibleUnloadMapList.size()];
+        createSmallMap(possibleUnloadMapList, unloadSmallMapIndexes, initialUnloadSmallMap, unloadMap);
+
+
+        roadsSmallMapIndexes = new byte[size];
+        initialRoadsSmallMap = new byte[roadMapList.size()];
+        createSmallMap(roadMapList, roadsSmallMapIndexes, initialRoadsSmallMap, roadsMap);
+
+    }
+
+    private void createSmallMap(
+            @NotNull List<Short> possibleMapList,
+            @NotNull byte[] smallMapIndexes,
+            @NotNull byte[] smallMap,
+            @NotNull byte[] fullMap) {
+        Arrays.fill(smallMapIndexes, (byte) -1);
+        byte currentIndexPick = 0;
+        for (Short position : possibleMapList) {
+            smallMap[currentIndexPick] = fullMap[position];
+            smallMapIndexes[position] = currentIndexPick;
+            currentIndexPick += 1;
+        }
     }
 
     private void isReachable(int position) {
-        if (roads[position] == RoadElement.EMPTY) {
+        if (roadsMap[position] == RoadElement.EMPTY) {
             Coordinate positionCoordinates = getCoordinate(position);
             throw new IllegalArgumentException("Element at (" + positionCoordinates.line + ", " + positionCoordinates.column + ") is not reachable");
         }
     }
 
     void createInitStates() {
-        int levelSize = width * height;
-
         Truck[] trucks = new Truck[levelTrucks.size()];
         for (int i = 0; i < levelTrucks.size(); i++) {
             LevelTruck levelTruck = levelTrucks.get(i);
             trucks[i] = new Truck(
                     levelTruck.position,
-                    levelTruck.type,
-                    Truck.STATUS_NOT_STARTED,
-                    null,
-                    null);
+                    false,
+                    0,
+                    new byte[0]);
         }
-        byte[] switchMaps = new byte[levelSize];
+
+        if ((numberOfSwitches == 0) && (bumpPositions.length == 0)) {
+            LevelState levelState = new LevelState(
+                    this,
+                    packagesToPick,
+                    initialRoadsSmallMap,
+                    initialPickSmallMap,
+                    initialUnloadSmallMap,
+                    trucks
+            );
+            states.add(levelState);
+            return;
+        }
+
+        byte[] switchMaps = new byte[size];
         Arrays.fill(switchMaps, (byte) -1);
         for (byte switchId = 0; switchId < MapElement.NUMBER_OF_SWITCH_TYPES; switchId++) {
             SwitchGroup switchGroup = switchGroups[switchId];
@@ -169,16 +256,16 @@ final class Level {
         boolean[] previousSwitchState = new boolean[MapElement.NUMBER_OF_SWITCH_TYPES];
         Arrays.fill(previousSwitchState, true);
         if (bumpPositions.length == 0) {
-            boolean[] bumpsMap = new boolean[levelSize];
+            boolean[] bumpsMap = new boolean[size];
             Arrays.fill(bumpsMap, false);
 
-            LevelState levelState = new LevelState(
+            FullLevelState levelState = new FullLevelState(
                     this,
                     bumpsMap,
                     packagesToPick,
-                    roads,
-                    pickMap,
-                    unloadMap,
+                    initialRoadsSmallMap,
+                    initialPickSmallMap,
+                    initialUnloadSmallMap,
                     bumpsMap,
                     trucks,
                     switchMaps,
@@ -187,8 +274,8 @@ final class Level {
         } else {
             int numberOfBumps = bumpPositions.length;
             int numberOfPossibilities = (int) Math.pow(2, numberOfBumps);
-            for (int bumpCode = 0; bumpCode <= numberOfPossibilities; bumpCode++) {
-                boolean[] bumpsMap = new boolean[levelSize];
+            for (short bumpCode = 0; bumpCode <= numberOfPossibilities; bumpCode++) {
+                boolean[] bumpsMap = new boolean[size];
                 Arrays.fill(bumpsMap, false);
                 String bumpBinarystring = Integer.toBinaryString(bumpCode);
                 bumpBinarystring = String.format("%0" + numberOfBumps + "d", Integer.parseInt(bumpBinarystring));
@@ -197,13 +284,13 @@ final class Level {
                         bumpsMap[bumpPositions[bumpIndex]] = true;
                     }
                 }
-                LevelState levelState = new LevelState(
+                FullLevelState levelState = new FullLevelState(
                         this,
                         bumpsMap,
                         packagesToPick,
-                        roads,
-                        pickMap,
-                        unloadMap,
+                        initialRoadsSmallMap,
+                        initialPickSmallMap,
+                        initialUnloadSmallMap,
                         bumpsMap,
                         trucks,
                         switchMaps,
@@ -234,10 +321,10 @@ final class Level {
 
     private static final class LevelTruck {
 
-        private final int position;
+        private final short position;
         private final byte type;
 
-        private LevelTruck(int position, byte type) {
+        private LevelTruck(short position, byte type) {
             this.position = position;
             this.type = type;
         }
@@ -251,18 +338,26 @@ final class Level {
         return result;
     }
 
+    private static @NotNull short[] listToPrimitiveShortArray(@NotNull List<Short> list) {
+        short[] result = new short[list.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = list.get(i);
+        }
+        return result;
+    }
+
     static final class SwitchGroup {
 
         @NotNull
-        final int[] roads;
+        final short[] roads;
 
         @NotNull
-        final int[] enabledSwitches;
+        final short[] enabledSwitches;
 
         @NotNull
-        final int[] disabledSwitches;
+        final short[] disabledSwitches;
 
-        SwitchGroup(@NotNull int[] roads, @NotNull int[] enabledSwitches, @NotNull int[] disabledSwitches) {
+        SwitchGroup(@NotNull short[] roads, @NotNull short[] enabledSwitches, @NotNull short[] disabledSwitches) {
             this.roads = roads;
             this.enabledSwitches = enabledSwitches;
             this.disabledSwitches = disabledSwitches;

@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
@@ -46,7 +45,7 @@ public final class App {
         level.createInitStates();
         Truck[] solution = null;
         while ((solution == null) && (!level.states.isEmpty())) {
-            LevelState nextCandidate = level.states.pop();
+            AbstractLevelState nextCandidate = level.states.pop();
             solution = nextCandidate.processState();
             if (solution != null) {
                 long stopTime = System.nanoTime();
@@ -63,32 +62,29 @@ public final class App {
     private static void printSolution(
             @NotNull Path solutionFile,
             @NotNull Level level,
-            @NotNull LevelState levelState,
+            @NotNull AbstractLevelState levelState,
             @NotNull Truck[] solution) throws IOException {
         List<String> content = new ArrayList<>();
 
-        if(level.bumpPositions.length != 0) {
+        if (level.bumpPositions.length != 0) {
             for (int bumpPosition : level.bumpPositions) {
-                boolean bumpEnabled = levelState.initialBumpMap[bumpPosition];
+                boolean bumpEnabled = ((FullLevelState) levelState).initialBumpMap[bumpPosition];
                 Level.Coordinate coordinate = level.getCoordinate(bumpPosition);
                 content.add("Bump at (" + coordinate.line + ", " + coordinate.column + ") is " + (bumpEnabled ? "enabled" : "disabled"));
             }
             content.add("");
         }
 
-        for (Truck truck : solution) {
-            List<Integer> moves = new ArrayList<>();
-            moves.add(truck.currentPosition);
-            IntegerListElement position = truck.previousPositions;
-            while (position != null) {
-                moves.add((position.element));
-                position = position.previous;
-            }
-            Collections.reverse(moves);
+        for (int truckIndex = 0; truckIndex < level.numberOfTrucks; truckIndex++) {
+            Truck truck = solution[truckIndex];
+            byte[] moves = new byte[truck.previousPositions.length + 1];
+            System.arraycopy(truck.previousPositions, 0, moves, 0, truck.previousPositions.length);
+            moves[truck.previousPositions.length] = level.roadsSmallMapIndexes[truck.currentPosition];
 
-            char[][] map = level.printMap(level.roads);
+            char[][] map = level.printMap(level.roadsMap);
             int previousPosition = -1;
-            for (Integer currentPosition : moves) {
+            for (byte smallPosition : moves) {
+                short currentPosition = indexOf(level.roadsSmallMapIndexes, smallPosition);
                 if (previousPosition != -1) {
                     Level.Coordinate previousCoordinates = level.getCoordinate(previousPosition);
                     char direction = getDirection(level, previousPosition, currentPosition);
@@ -96,7 +92,7 @@ public final class App {
                 }
                 previousPosition = currentPosition;
             }
-            Level.Coordinate firstPositionCoordinates = level.getCoordinate(moves.get(0));
+            Level.Coordinate firstPositionCoordinates = level.getCoordinate(indexOf(level.roadsSmallMapIndexes, moves[0]));
             map[firstPositionCoordinates.line][firstPositionCoordinates.column] = '□';
 
             Level.Coordinate previousPositionCoordinates = level.getCoordinate(previousPosition);
@@ -108,7 +104,8 @@ public final class App {
             content.add("");
 
             previousPosition = -1;
-            for (Integer currentPosition : moves) {
+            for (byte smallPosition : moves) {
+                short currentPosition = indexOf(level.roadsSmallMapIndexes, smallPosition);
                 Level.Coordinate currentCoordinates = level.getCoordinate(currentPosition);
                 StringBuilder currentText = new StringBuilder();
                 if (previousPosition == -1) {
@@ -125,7 +122,7 @@ public final class App {
                         append(")");
 
                 if (previousPosition == -1) {
-                    currentText.append(" (").append(MapElement.TRUCK_TO_NAME.get(truck.type)).append(" truck)");
+                    currentText.append(" (").append(MapElement.TRUCK_TO_NAME.get(level.trucksTypes[truckIndex])).append(" truck)");
                 }
                 if (level.pickMap[currentPosition] != MapElement.EMPTY) {
                     currentText.append(" maybe pick a ").append(MapElement.PACKAGE_TO_NAME.get(level.pickMap[currentPosition])).append(" package");
@@ -135,7 +132,7 @@ public final class App {
                     currentText.append(" click");
                 } else if (Arrays.binarySearch(MapElement.SWITCHES_BUTTONS_DISABLED, level.elements[currentPosition]) >= 0) {
                     currentText.append(" click");
-                } else if(Arrays.binarySearch(level.bumpPositions, currentPosition) >= 0) {
+                } else if (Arrays.binarySearch(level.bumpPositions, currentPosition) >= 0) {
                     currentText.append(" maybe bump a package or pick one");
                 }
                 previousPosition = currentPosition;
@@ -170,11 +167,21 @@ public final class App {
                     forEach(path -> {
                         try {
                             processLevel(path.getParent());
+                            System.gc();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                     });
         }
+    }
+
+    private static short indexOf(@NotNull byte[] array, byte value) {
+        for (short i = 0; i < array.length; i++) {
+            if (array[i] == value) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static void print(@NotNull Path path, @NotNull String message, boolean error) {

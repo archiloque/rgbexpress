@@ -23,8 +23,8 @@ final class LevelReader {
             throw new IllegalArgumentException("Files have different sizes");
         }
 
-        int height = elementsContent.size();
-        int width = elementsContent.get(0).length();
+        byte height = (byte) elementsContent.size();
+        byte width = (byte) elementsContent.get(0).length();
 
         byte[] roads = new byte[height * width];
         byte[] elements = new byte[height * width];

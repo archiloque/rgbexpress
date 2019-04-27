@@ -7,17 +7,29 @@ final class LinkedList<E> {
 
     private @Nullable ListElement<E> current;
 
+    private @Nullable ListElement<E> last;
+
     LinkedList() {
     }
 
     void add(@NotNull E element) {
-        current = new ListElement<>(element, current);
+        ListElement<E> newLast = new ListElement<>(element);
+        if (last != null) {
+            last.next = newLast;
+        }
+        if (current == null) {
+            current = newLast;
+        }
+        last = newLast;
     }
 
     @Nullable E pop() {
         if (current != null) {
             E currentElement = current.element;
-            current = current.previous;
+            current = current.next;
+            if (current == null) {
+                last = null;
+            }
             return currentElement;
         } else {
             return null;
@@ -32,11 +44,10 @@ final class LinkedList<E> {
 
         private final @NotNull E element;
 
-        private final @Nullable ListElement<E> previous;
+        private @Nullable ListElement<E> next;
 
-        ListElement(@NotNull E element, @Nullable ListElement<E> previous) {
+        ListElement(@NotNull E element) {
             this.element = element;
-            this.previous = previous;
         }
     }
 

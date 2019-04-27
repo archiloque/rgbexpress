@@ -52,22 +52,22 @@ final class MapElement {
     private static final char BUMP_CHAR = '○';
 
     static final byte EMPTY = 0;
+    private static final byte RED_PACKAGE = EMPTY + 1;
+    private static final byte GREEN_PACKAGE = RED_PACKAGE + 1;
+    private static final byte BLUE_PACKAGE = GREEN_PACKAGE + 1;
+    private static final byte YELLOW_PACKAGE = BLUE_PACKAGE + 1;
 
-    private static final byte RED_TRUCK = EMPTY + 1;
-    private static final byte RED_PACKAGE = RED_TRUCK + 1;
-    private static final byte RED_WAREHOUSE = RED_PACKAGE + 1;
+    private static final byte RED_TRUCK = YELLOW_PACKAGE + 1;
+    private static final byte RED_WAREHOUSE = RED_TRUCK + 1;
 
     private static final byte GREEN_TRUCK = RED_WAREHOUSE + 1;
-    private static final byte GREEN_PACKAGE = GREEN_TRUCK + 1;
-    private static final byte GREEN_WAREHOUSE = GREEN_PACKAGE + 1;
+    private static final byte GREEN_WAREHOUSE = GREEN_TRUCK + 1;
 
     private static final byte BLUE_TRUCK = GREEN_WAREHOUSE + 1;
-    private static final byte BLUE_PACKAGE = BLUE_TRUCK + 1;
-    private static final byte BLUE_WAREHOUSE = BLUE_PACKAGE + 1;
+    private static final byte BLUE_WAREHOUSE = BLUE_TRUCK + 1;
 
     private static final byte YELLOW_TRUCK = BLUE_WAREHOUSE + 1;
-    private static final byte YELLOW_PACKAGE = YELLOW_TRUCK + 1;
-    private static final byte YELLOW_WAREHOUSE = YELLOW_PACKAGE + 1;
+    private static final byte YELLOW_WAREHOUSE = YELLOW_TRUCK + 1;
 
     private static final byte WHITE_TRUCK = YELLOW_WAREHOUSE + 1;
 
@@ -98,20 +98,21 @@ final class MapElement {
     static final char[] ALL_ELEMENTS = new char[]{
             EMPTY_CHAR,
 
-            RED_TRUCK_CHAR,
             RED_PACKAGE_CHAR,
+            GREEN_PACKAGE_CHAR,
+            BLUE_PACKAGE_CHAR,
+            YELLOW_PACKAGE_CHAR,
+
+            RED_TRUCK_CHAR,
             RED_WAREHOUSE_CHAR,
 
             GREEN_TRUCK_CHAR,
-            GREEN_PACKAGE_CHAR,
             GREEN_WAREHOUSE_CHAR,
 
             BLUE_TRUCK_CHAR,
-            BLUE_PACKAGE_CHAR,
             BLUE_WAREHOUSE_CHAR,
 
             YELLOW_TRUCK_CHAR,
-            YELLOW_PACKAGE_CHAR,
             YELLOW_WAREHOUSE_CHAR,
 
             WHITE_TRUCK_CHAR,

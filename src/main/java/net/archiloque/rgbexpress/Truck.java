@@ -1,31 +1,23 @@
 package net.archiloque.rgbexpress;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 final class Truck {
 
-    static final byte STATUS_NOT_STARTED = 0;
-    static final byte STATUS_DRIVING = 1;
-    static final byte STATUS_STOPPED = 2;
+    final boolean stopped;
 
-    final @Nullable IntegerListElement previousPositions;
+    final @NotNull byte[] previousPositions;
 
-    final int currentPosition;
+    final short currentPosition;
 
-    final byte type;
+    final int cargo;
 
-    byte status;
-
-    @Nullable ByteListElement cargo;
-
-    Truck(int currentPosition,
-          byte type,
-          byte status,
-          @Nullable ByteListElement cargo,
-          @Nullable IntegerListElement previousPositions) {
+    Truck(short currentPosition,
+          boolean stopped,
+          int cargo,
+          @NotNull byte[] previousPositions) {
         this.currentPosition = currentPosition;
-        this.type = type;
-        this.status = status;
+        this.stopped = stopped;
         this.cargo = cargo;
         this.previousPositions = previousPositions;
     }

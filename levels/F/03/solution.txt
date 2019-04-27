@@ -1,6 +1,6 @@
 Bump at (2, 2) is disabled
-Bump at (2, 4) is enabled
-Bump at (2, 6) is disabled
+Bump at (2, 4) is disabled
+Bump at (2, 6) is enabled
 Bump at (2, 8) is disabled
 
 ↓←← ┌─┐ ┌─┐

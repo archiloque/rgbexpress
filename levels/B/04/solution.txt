@@ -1,9 +1,9 @@
    □   
    ↓   
-X←←→↓─┐
-↓←↑←←─┤
-↓ ↑ │ │
-→→↑─┼─┤
+X─↓←┬─┐
+↑─↓─┼─┤
+↑ ↓ │ │
+↑←←─┼─┤
 ├─┴─┴─┤
 │     │
 ╵     ╵
@@ -11,21 +11,15 @@ X←←→↓─┐
 Start at (0,3) (red truck)
 ↓ (1,3)
 ↓ (2,3)
-→ (2,4)
-↓ (3,4)
-← (3,3)
-← (3,2) maybe pick a red package
-← (3,1)
-← (3,0)
-↓ (4,0) maybe pick a red package
-↓ (5,0)
-→ (5,1) unload a red package
-→ (5,2)
-↑ (4,2)
-↑ (3,2) maybe pick a red package
-↑ (2,2)
-← (2,1)
-← (2,0) unload a red package
+← (2,2)
+↓ (3,2) maybe pick a red package
+↓ (4,2)
+↓ (5,2)
+← (5,1) unload a red package
+← (5,0)
+↑ (4,0) maybe pick a red package
+↑ (3,0)
+↑ (2,0) unload a red package
 
    ╷   
    │   

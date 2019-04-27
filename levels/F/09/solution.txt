@@ -1,4 +1,4 @@
-Bump at (4, 2) is enabled
+Bump at (4, 2) is disabled
 Bump at (4, 4) is enabled
 Bump at (4, 6) is enabled
 Bump at (7, 2) is disabled
@@ -8,10 +8,10 @@ Bump at (7, 6) is disabled
 □→↓─┬X←─┐
 │ ↓ │ ↑ │
 │ ↓ │ ↑ │
-↓←→→→→↑─┤
-↓ ↑ │ │ │
-↓ ↑ │ │ │
-→→↑─┴─┼─┘
+├─→→→→↑─┤
+│ │ │ │ │
+│ │ │ │ │
+└─┼─┴─┼─┘
   │   │  
   └───┘  
 
@@ -21,16 +21,6 @@ Start at (1,0) (red truck)
 ↓ (2,2)
 ↓ (3,2)
 ↓ (4,2) maybe bump a package or pick one
-← (4,1)
-← (4,0)
-↓ (5,0)
-↓ (6,0)
-↓ (7,0)
-→ (7,1)
-→ (7,2) maybe bump a package or pick one
-↑ (6,2)
-↑ (5,2)
-↑ (4,2) maybe bump a package or pick one
 → (4,3)
 → (4,4) maybe bump a package or pick one
 → (4,5)
@@ -47,9 +37,9 @@ Start at (1,0) (red truck)
 ├─┼─↑─↓←←
 │ │ ↑ ↓ │
 │ │ ↑ ↓ │
-└─→→↑─↓─┘
-  ↑   ↓  
-  ↑←←←←  
+└─┼─↑←←─┘
+  │   │  
+  └───┘  
 
 Start at (1,8) (yellow truck)
 ↓ (2,8)
@@ -60,16 +50,8 @@ Start at (1,8) (yellow truck)
 ↓ (5,6)
 ↓ (6,6)
 ↓ (7,6) maybe bump a package or pick one
-↓ (8,6)
-↓ (9,6)
-← (9,5)
-← (9,4)
-← (9,3)
-← (9,2)
-↑ (8,2)
-↑ (7,2) maybe bump a package or pick one
-→ (7,3)
-→ (7,4)
+← (7,5)
+← (7,4)
 ↑ (6,4)
 ↑ (5,4)
 ↑ (4,4) maybe bump a package or pick one

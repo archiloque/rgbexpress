@@ -19,44 +19,18 @@ Start at (4,0) (blue truck)
 → (1,4) unload a blue package
 
            
- ┌───┬───┐ 
- │   │   │ 
- │   │   │ 
-╶┼───┼───┼X
- │   │   │ 
- ├───┼───┤ 
- │   │   │ 
- │   │   │ 
-╶┴───┴───┴╴
-
-Start at (4,10) (red truck)
-
-           
  ┌───↓←←←← 
  │   ↓   ↑ 
  │   ↓   ↑ 
-╶→→→→↓→→→↑╴
- ↑   ↓   │ 
- ↑───↓───┤ 
- ↑   ↓   │ 
- ↑   ↓   │ 
-□↑───→→X─┴╴
+╶┼───↓───↑□
+ │   ↓   │ 
+ ├───↓───┤ 
+ │   ↓   │ 
+ │   ↓   │ 
+╶┴───→→X─┴╴
 
-Start at (9,0) (red truck)
-→ (9,1)
-↑ (8,1)
-↑ (7,1)
-↑ (6,1)
-↑ (5,1)
-↑ (4,1) maybe pick a blue package
-→ (4,2)
-→ (4,3)
-→ (4,4)
-→ (4,5)
-→ (4,6) maybe pick a red package
-→ (4,7) unload a red package
-→ (4,8)
-→ (4,9)
+Start at (4,10) (red truck)
+← (4,9)
 ↑ (3,9)
 ↑ (2,9)
 ↑ (1,9)
@@ -74,6 +48,31 @@ Start at (9,0) (red truck)
 ↓ (9,5)
 → (9,6)
 → (9,7) unload a red package
+
+           
+ ┌───┬───┐ 
+ │   │   │ 
+ │   │   │ 
+╶→→→→→→X─┼╴
+ ↑   │   │ 
+ ↑───┼───┤ 
+ ↑   │   │ 
+ ↑   │   │ 
+□↑───┴───┴╴
+
+Start at (9,0) (red truck)
+→ (9,1)
+↑ (8,1)
+↑ (7,1)
+↑ (6,1)
+↑ (5,1)
+↑ (4,1) maybe pick a blue package
+→ (4,2)
+→ (4,3)
+→ (4,4)
+→ (4,5)
+→ (4,6) maybe pick a red package
+→ (4,7) unload a red package
 
            
  ┌───┬───┐ 

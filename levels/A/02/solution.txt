@@ -1,7 +1,7 @@
          
 →→↓   ↓←←
 ↑ ↓   ↓ ↑
-↑ →X─ ↓ ↑
+↑ →→X ↓ ↑
 ↑     ↓ ↑
 ↑←←←←←← ↑
         ↑
@@ -42,5 +42,6 @@ Start at (7,0) (blue truck)
 → (1,2)
 ↓ (2,2)
 ↓ (3,2)
-→ (3,3) unload a blue package
+→ (3,3)
+→ (3,4) unload a blue package
 

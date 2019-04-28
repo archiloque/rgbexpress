@@ -46,8 +46,8 @@ Start at (8,0) (yellow truck)
   →→→↓┴─┐  
   ↑  ↓  │  
   ↑  ↓  │  
-┌─↑←←↓→X┼─┐
-│ │ ↑→↑ │ │
+┌─↑←←↓→→→→↓
+│ │ ↑→↑ │ X
 │ │  ↑  │ │
 └─┼──↑←←←←□
   │     │  
@@ -78,4 +78,8 @@ Start at (8,10) (green truck)
 → (6,6) maybe pick a green package
 ↑ (5,6)
 → (5,7) unload a green package
+→ (5,8)
+→ (5,9)
+→ (5,10)
+↓ (6,10)
 

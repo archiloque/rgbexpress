@@ -11,6 +11,12 @@ import java.util.List;
  */
 final class Level {
 
+    int minimalNumberOfTurns = Integer.MAX_VALUE;
+
+    AbstractLevelState bestSolutionLevelState;
+
+    Truck[] bestSolutionTrucks;
+
     private final byte height;
 
     final byte width;
@@ -64,10 +70,11 @@ final class Level {
     final short[] bumpPositions;
 
     private final byte numberOfPackagesToPick;
+
     private final int numberOfPackagesToPickPerPackages;
 
     @NotNull
-    final LinkedList<AbstractLevelState> states = new LinkedList<>();
+    final FiFoList<AbstractLevelState> states = new FiFoList<>();
 
     Level(byte height, byte width, @NotNull byte[] roadsMap, @NotNull byte[] elements) {
         this.height = height;
@@ -237,6 +244,7 @@ final class Level {
         if ((numberOfSwitches == 0) && (bumpPositions.length == 0)) {
             LevelState levelState = new LevelState(
                     this,
+                    0,
                     numberOfPackagesToPickPerPackages,
                     initialRoadsSmallMap,
                     initialPickSmallMap,
@@ -264,6 +272,7 @@ final class Level {
 
             FullLevelState levelState = new FullLevelState(
                     this,
+                    0,
                     bumpsMap,
                     numberOfPackagesToPickPerPackages,
                     initialRoadsSmallMap,
@@ -289,6 +298,7 @@ final class Level {
                 }
                 FullLevelState levelState = new FullLevelState(
                         this,
+                        0,
                         bumpsMap,
                         numberOfPackagesToPickPerPackages,
                         initialRoadsSmallMap,
@@ -301,6 +311,14 @@ final class Level {
                 states.add(levelState);
             }
         }
+    }
+
+    boolean solve(){
+        while(! states.isEmpty()) {
+            states.pop().processState();
+        }
+
+        return false;
     }
 
     @NotNull char[][] printMap(@NotNull byte[] roads) {

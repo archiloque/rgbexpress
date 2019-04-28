@@ -38,7 +38,7 @@ Start at (6,1) (red truck)
 │ │ ↓ ↑ │ │
 └─┼─↓─↑─┼─┘
   │ ↓ ↑ │  
- ┌┴X← ↑←←← 
+ ┌X←← ↑←←← 
  │       ↑ 
  ╵       □ 
 
@@ -59,4 +59,5 @@ Start at (6,9) (yellow truck)
 ↓ (3,4)
 ↓ (4,4)
 ← (4,3) unload a yellow package
+← (4,2)
 

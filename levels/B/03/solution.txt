@@ -1,5 +1,5 @@
            
-┌─┬──X──┬─┐
+┌─┬──→→X┬─┐
 │ │  ↑  │ │
 │ ├──↑──┤ │
 │ │  ↑  │ │
@@ -17,6 +17,8 @@ Start at (7,2) (red truck)
 ↑ (3,5)
 ↑ (2,5) maybe pick a red package
 ↑ (1,5) unload a red package
+→ (1,6)
+→ (1,7)
 
            
 ┌─┬──┬──X←←

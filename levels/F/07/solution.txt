@@ -1,6 +1,6 @@
 Bump at (5, 2) is disabled
 Bump at (5, 4) is disabled
-Bump at (5, 7) is disabled
+Bump at (5, 7) is enabled
 Bump at (8, 4) is disabled
 
   ┌────┐  
@@ -8,10 +8,10 @@ Bump at (8, 4) is disabled
   │    │  
   │ ╷  │  
   │ │  │  
-→→↓─→→→→→X
-↑ ↓ ↑  │  
-↑ ↓ ↑  │  
-↑ →→↑──┘  
+→→↓─┼──→→X
+↑ ↓ │  ↑  
+↑ ↓ │  ↑  
+↑ →→→→→↑  
 □   ╵     
 
 Start at (9,0) (yellow truck)
@@ -26,12 +26,12 @@ Start at (9,0) (yellow truck)
 ↓ (8,2)
 → (8,3)
 → (8,4) maybe bump a package or pick one
-↑ (7,4) maybe pick a yellow package
-↑ (6,4)
-↑ (5,4) maybe bump a package or pick one
-→ (5,5)
-→ (5,6)
-→ (5,7) maybe bump a package or pick one
+→ (8,5)
+→ (8,6)
+→ (8,7)
+↑ (7,7)
+↑ (6,7)
+↑ (5,7) maybe bump a package or pick one
 → (5,8)
 → (5,9) unload a yellow package
 
@@ -40,20 +40,20 @@ Start at (9,0) (yellow truck)
   ↓    ↑  
   ↓ X  ↑  
   ↓ ↑  ↑  
-┌─→→↑──↑╫╴
-│ │ │  ↑  
-│ │ │  ↑  
-│ └─→→→↑  
+┌─→→↑→→↑╫╴
+│ │ ↑  │  
+│ │ ↑  │  
+│ └─↑──┘  
 ╵   □     
 
 Start at (9,4) (red truck)
 ↑ (8,4) maybe bump a package or pick one
-→ (8,5)
-→ (8,6)
-→ (8,7)
-↑ (7,7)
-↑ (6,7)
-↑ (5,7) maybe bump a package or pick one
+↑ (7,4) maybe pick a yellow package
+↑ (6,4)
+↑ (5,4) maybe bump a package or pick one
+→ (5,5)
+→ (5,6)
+→ (5,7) maybe bump a package or pick one
 ↑ (4,7)
 ↑ (3,7)
 ↑ (2,7)

@@ -45,31 +45,35 @@ Start at (0,10) (green truck)
   ┌─┤ │ │ │
   │ ├─┼─┼─┤
   │ │ │ │ │
-┌─┼─┴X┴─┼─┤
-│ │  ↑  │ │
+↓←←─┴→X─┼─┤
+↓ ↑  ↑  │ │
 →→→→→↑┬─┼─┘
-↑ │ │ │ │  
-↑←←←←←← │  
-│ │ │ ↑─┘  
-□→→→→→↑    
+│ ↑ │ │ │  
+→→↑→↓─┤ │  
+↑ ↑ ↓ ├─┘  
+□─↑←←─┘    
 
 Start at (10,0) (blue truck)
-→ (10,1)
-→ (10,2)
-→ (10,3)
-→ (10,4)
-→ (10,5)
-→ (10,6)
-↑ (9,6)
-↑ (8,6)
-← (8,5)
-← (8,4)
-← (8,3)
-← (8,2) maybe pick a blue package
-← (8,1)
-← (8,0)
-↑ (7,0)
-↑ (6,0)
+↑ (9,0)
+↑ (8,0)
+→ (8,1)
+→ (8,2) maybe pick a blue package
+→ (8,3)
+→ (8,4)
+↓ (9,4)
+↓ (10,4)
+← (10,3)
+← (10,2)
+↑ (9,2)
+↑ (8,2) maybe pick a blue package
+↑ (7,2)
+↑ (6,2) maybe pick a blue package
+↑ (5,2)
+↑ (4,2) maybe pick a green package
+← (4,1)
+← (4,0)
+↓ (5,0)
+↓ (6,0)
 → (6,1) unload a blue package
 → (6,2) maybe pick a blue package
 → (6,3)
@@ -77,4 +81,5 @@ Start at (10,0) (blue truck)
 → (6,5)
 ↑ (5,5)
 ↑ (4,5) unload a blue package
+→ (4,6) maybe pick a green package
 

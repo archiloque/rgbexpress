@@ -43,17 +43,12 @@ public final class App {
         print(path, "Solving level", false);
         long startTime = System.nanoTime();
         level.createInitStates();
-        Truck[] solution = null;
-        while ((solution == null) && (!level.states.isEmpty())) {
-            AbstractLevelState nextCandidate = level.states.pop();
-            solution = nextCandidate.processState();
-            if (solution != null) {
+        level.solve();
+            if (level.bestSolutionLevelState != null) {
                 long stopTime = System.nanoTime();
                 print(path, "Solved in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString(), false);
-                printSolution(solutionFile, level, nextCandidate, solution);
-            }
-        }
-        if (solution == null) {
+                printSolution(solutionFile, level, level.bestSolutionLevelState, level.bestSolutionTrucks);
+            } else {
             long stopTime = System.nanoTime();
             print(path, "Failed in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString(), true);
         }

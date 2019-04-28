@@ -48,10 +48,10 @@ Start at (5,0) (red truck)
  │   ↓   ↑ 
 ╶┼───↓───↑□
  │   ↓   │ 
- └┬──↓──┬┘ 
-  │  ↓  │  
-  │  ↓  │  
-  └X←←──┘  
+ └X──↓──┬┘ 
+  ↑  ↓  │  
+  ↑  ↓  │  
+  ↑←←←──┘  
 
 Start at (5,10) (green truck)
 ← (5,9)
@@ -76,4 +76,8 @@ Start at (5,10) (green truck)
 ↓ (10,5)
 ← (10,4)
 ← (10,3) unload a green package
+← (10,2)
+↑ (9,2)
+↑ (8,2)
+↑ (7,2) unload a red package
 

@@ -1,6 +1,6 @@
 Bump at (2, 2) is disabled
-Bump at (2, 4) is disabled
-Bump at (2, 6) is enabled
+Bump at (2, 4) is enabled
+Bump at (2, 6) is disabled
 Bump at (2, 8) is disabled
 
 ↓←← ┌─┐ ┌─┐
@@ -45,7 +45,7 @@ Start at (10,1) (red truck)
 │ │ ↓ ↑ │ │
 └─┼─↓─↑─┼─┘
   │ ↓ ↑ │  
- ┌┴X← ↑←←← 
+ ┌X←← ↑←←← 
  │       ↑ 
  │       ↑ 
  │       ↑ 
@@ -75,4 +75,5 @@ Start at (10,8) (yellow truck)
 ↓ (3,4)
 ↓ (4,4)
 ← (4,3) unload a yellow package
+← (4,2)
 

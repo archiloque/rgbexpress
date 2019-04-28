@@ -30,9 +30,9 @@ Start at (5,0) (red truck)
    │ │ │   
  ┌─┼╫┼─┼─┐ 
  │ │ │ │ │ 
-╶┼─→→→X┼─↓□
- │ ↑ │ │ ↓ 
- └─↑←←←←←← 
+╶┼─→X↓←←─↓□
+ │ ↑ ↓ ↑ ↓ 
+ └─↑←←─↑←← 
 
 Start at (5,10) (red truck)
 ← (5,9)
@@ -40,13 +40,15 @@ Start at (5,10) (red truck)
 ↓ (7,9)
 ← (7,8) maybe pick a red package
 ← (7,7)
-← (7,6)
-← (7,5)
+↑ (6,7)
+↑ (5,7)
+← (5,6) unload a red package
+← (5,5)
+↓ (6,5)
+↓ (7,5)
 ← (7,4) maybe pick a red package
 ← (7,3)
 ↑ (6,3)
 ↑ (5,3)
 → (5,4) unload a red package
-→ (5,5)
-→ (5,6) unload a red package
 

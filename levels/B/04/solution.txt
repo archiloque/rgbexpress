@@ -26,8 +26,8 @@ Start at (0,3) (red truck)
 ┌─┬┴┬─┐
 ├─┼─┼─┤
 │ │ │ │
-├─┼X←─┤
-→→→→↑─┤
+├─↓←←─┤
+→→X→↑─┤
 ↑     │
 □     ╵
 
@@ -40,6 +40,8 @@ Start at (8,0) (green truck)
 → (6,4) maybe pick a green package
 ↑ (5,4)
 ← (5,3) unload a green package
+← (5,2)
+↓ (6,2)
 
    ╷   
    │   

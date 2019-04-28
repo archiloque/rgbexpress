@@ -3,17 +3,10 @@ package net.archiloque.rgbexpress;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 final class FullLevelState extends AbstractLevelState {
-
-    /**
-     * The current level
-     */
-    @NotNull
-    private final Level level;
 
     /**
      * Starting bump map
@@ -22,39 +15,10 @@ final class FullLevelState extends AbstractLevelState {
     final boolean[] initialBumpMap;
 
     /**
-     * Number of unprocessed packages per package type
-     */
-    private final int previousNumberOfUnprocessedPackages;
-
-    /**
-     * Maps of the road as {@link RoadElement}
-     */
-    @NotNull
-    private final byte[] previousRoadMaps;
-
-    /**
-     * Map of the packages to pick, designed by their package as {@link MapElement}
-     */
-    @NotNull
-    private final byte[] previousPickMap;
-
-    /**
-     * Map of the warehouse drop points, designed by their package as {@link MapElement}
-     */
-    @NotNull
-    private final byte[] previousUnloadMap;
-
-    /**
      * Map of the bumps
      */
     @NotNull
     private final boolean[] previousBumpMap;
-
-    /**
-     * Current trucks
-     */
-    @NotNull
-    private final Truck[] currentTrucks;
 
     /**
      * Map of the enabled switches, containing the id of the switch or -1 if not switch
@@ -70,6 +34,7 @@ final class FullLevelState extends AbstractLevelState {
 
     FullLevelState(
             final @NotNull Level level,
+            final int numberOfTurns,
             final @NotNull boolean[] initialBumpMap,
             final int previousNumberOfUnprocessedPackages,
             final @NotNull byte[] previousRoadMaps,
@@ -80,30 +45,30 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull byte[] previousSwitchMap,
             final @NotNull boolean[] previousSwitchState
     ) {
+        super(
+                level,
+                numberOfTurns,
+                previousNumberOfUnprocessedPackages,
+                previousRoadMaps,
+                previousPickMap,
+                previousUnloadMap,
+                currentTrucks
+        );
         this.initialBumpMap = initialBumpMap;
-        this.level = level;
-        this.previousNumberOfUnprocessedPackages = previousNumberOfUnprocessedPackages;
-        this.previousRoadMaps = previousRoadMaps;
-        this.previousUnloadMap = previousUnloadMap;
-        this.previousPickMap = previousPickMap;
         this.previousBumpMap = previousBumpMap;
-        this.currentTrucks = currentTrucks;
         this.previousSwitchMap = previousSwitchMap;
         this.previousSwitchState = previousSwitchState;
     }
 
     /**
      * Process the current state
-     *
-     * @return a Truck[] if we find a winning solution
      */
     @Override
-    @Nullable
-    public Truck[] processState() throws IOException {
+    public void processState() {
         if (LOG) {
             log(0, "Processing new state");
         }
-        return processTruck(
+        processTruck(
                 0,
                 new Truck[level.numberOfTrucks],
                 previousNumberOfUnprocessedPackages,
@@ -119,10 +84,8 @@ final class FullLevelState extends AbstractLevelState {
 
     /**
      * Function to be called recursively on each {@link Truck}
-     *
-     * @return a Truck[] if we find a winning solution
      */
-    private @Nullable Truck[] processTruck(
+    private void processTruck(
             final int truckIndex,
             final @NotNull Truck[] nextTrucks,
             final int nextNumberOfUnprocessedPackages,
@@ -133,10 +96,10 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
-            final @Nullable IntegerListElement forbiddenLocations) throws IOException {
+            final @Nullable IntegerListElement forbiddenLocations) {
         Truck currentTruck = currentTrucks[truckIndex];
         if (currentTruck.stopped) {
-            return processStoppedTruck(
+            processStoppedTruck(
                     truckIndex,
                     currentTruck,
                     nextTrucks,
@@ -150,7 +113,7 @@ final class FullLevelState extends AbstractLevelState {
                     nextNumberOfUnprocessedPackages,
                     nextNumberOfNotStoppedTrucks);
         } else {
-            return processNotSoppedTruck(
+            processNotSoppedTruck(
                     truckIndex,
                     currentTruck,
                     nextTrucks,
@@ -166,7 +129,7 @@ final class FullLevelState extends AbstractLevelState {
         }
     }
 
-    private @Nullable Truck[] processNotSoppedTruck(
+    private void processNotSoppedTruck(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
@@ -178,9 +141,8 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
             final int nextNumberOfUnprocessedPackages,
-            final int nextNumberOfNotStoppedTrucks) throws IOException {
-        // try to go up
-        Truck[] result = processNotSoppedTruckTryStopping(
+            final int nextNumberOfNotStoppedTrucks) {
+        processNotSoppedTruckTryStopping(
                 truckIndex,
                 currentTruck,
                 nextNumberOfUnprocessedPackages,
@@ -193,11 +155,7 @@ final class FullLevelState extends AbstractLevelState {
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations);
-        if (result != null) {
-            return result;
-        }
-        // we can stop right here
-        result = processNotSoppedTruckTryGoing(
+        processNotSoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -213,11 +171,7 @@ final class FullLevelState extends AbstractLevelState {
                 Direction.DOWN,
                 level.width
         );
-        if (result != null) {
-            return result;
-        }
-        // try to go left
-        result = processNotSoppedTruckTryGoing(
+        processNotSoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -233,11 +187,7 @@ final class FullLevelState extends AbstractLevelState {
                 Direction.LEFT,
                 (short) -1
         );
-        if (result != null) {
-            return result;
-        }
-        // try to go right
-        result = processNotSoppedTruckTryGoing(
+        processNotSoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -253,11 +203,7 @@ final class FullLevelState extends AbstractLevelState {
                 Direction.RIGHT,
                 (short) +1
         );
-        if (result != null) {
-            return result;
-        }
-        // try to go down
-        result = processNotSoppedTruckTryGoing(
+        processNotSoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -273,10 +219,9 @@ final class FullLevelState extends AbstractLevelState {
                 Direction.UP,
                 (short) -level.width
         );
-        return result;
     }
 
-    private @Nullable Truck[] processNotSoppedTruckTryStopping(
+    private void processNotSoppedTruckTryStopping(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final int nextNumberOfUnprocessedPackages,
@@ -288,7 +233,7 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
-            final @Nullable IntegerListElement forbiddenLocations) throws IOException {
+            final @Nullable IntegerListElement forbiddenLocations) {
         short currentPosition = currentTruck.currentPosition;
         if (LOG) {
             log(truckIndex, "Truck " + truckIndex + " " + MapElement.TRUCK_TO_NAME.get(level.trucksTypes[truckIndex]) + " at (" + (currentPosition / level.width) + ", " + (currentPosition % level.width) + ") and want to stop");
@@ -297,13 +242,16 @@ final class FullLevelState extends AbstractLevelState {
         if (
                 (!anyTruckHere(nextTrucks, currentPosition)) &&
                         (currentTruck.cargo == 0)) {
+            if(LOG) {
+                log(truckIndex,"Can stop");
+            }
             Truck newTruck = new Truck(
                     currentPosition,
                     true,
                     currentTruck.cargo,
                     currentTruck.previousPositions
             );
-            return endProcessTruck(
+            endProcessTruck(
                     truckIndex,
                     nextNumberOfUnprocessedPackages,
                     nextNumberOfNotStoppedTrucks,
@@ -317,11 +265,13 @@ final class FullLevelState extends AbstractLevelState {
                     nextSwitchState,
                     forbiddenLocations);
         } else {
-            return null;
+            if(LOG) {
+                log(truckIndex, "Can't stop because there's packages to deliver");
+            }
         }
     }
 
-    private @Nullable Truck[] processNotSoppedTruckTryGoing(
+    private void processNotSoppedTruckTryGoing(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
@@ -335,7 +285,7 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement nextForbiddenLocations,
             final int direction,
-            final short deltaPosition) throws IOException {
+            final short deltaPosition) {
         short currentPosition = currentTruck.currentPosition;
         byte currentRoad = getElementInMap(currentPosition, nextRoadMap, level.roadsSmallMapIndexes);
         byte currentTruckType = level.trucksTypes[truckIndex];
@@ -347,7 +297,7 @@ final class FullLevelState extends AbstractLevelState {
             if (LOG) {
                 log(truckIndex, "Can't go there because of road");
             }
-            return null;
+            return;
         }
         short targetPosition = (short) (currentPosition + deltaPosition);
 
@@ -355,7 +305,7 @@ final class FullLevelState extends AbstractLevelState {
             if (LOG) {
                 log(truckIndex, "Can't go there because of another truck");
             }
-            return null;
+            return;
         }
 
         @NotNull byte[] previousPositions = currentTruck.previousPositions;
@@ -378,7 +328,7 @@ final class FullLevelState extends AbstractLevelState {
                 if (LOG) {
                     log(truckIndex, "Can't go there because we should unload a cargo and we don't have any");
                 }
-                return null;
+                return;
             }
 
             // get the last package
@@ -388,14 +338,14 @@ final class FullLevelState extends AbstractLevelState {
                 if (LOG) {
                     log(truckIndex, "Can't go there because the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " package doesn't match the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " warehouse");
                 }
-                return null;
+                return;
             }
 
             if (!MapElement.CAN_UNLOAD[currentTruckType][elementToUnload]) {
                 if (LOG) {
                     log(truckIndex, "Can't go there because the " + MapElement.PACKAGE_TO_NAME.get(elementToUnload) + " package can't be unload by a " + MapElement.TRUCK_TO_NAME.get(currentTruckType) + " truck");
                 }
-                return null;
+                return;
             }
             // unload the package
             if (LOG) {
@@ -410,32 +360,8 @@ final class FullLevelState extends AbstractLevelState {
 
             if (nextNextNumberOfUnprocessedPackages == 0) {
                 // we found a solution !
-                Truck[] nextNextTrucks = nextTrucks.clone();
-
-                @NotNull Truck newTruck = new Truck(
-                        targetPosition,
-                        false,
-                        newCargo,
-                        newPositions
-                );
-
-                nextNextTrucks[truckIndex] = newTruck;
-                if (!checkForbiddenLocations(nextNextTrucks, nextForbiddenLocations)) {
-                    if (LOG) {
-                        log(truckIndex, "A truck is on a forbidden location");
-                    }
-                    return null;
-                }
-                if (currentTrucks.length != truckIndex)
-                    System.arraycopy(
-                            currentTrucks,
-                            truckIndex + 1,
-                            nextNextTrucks,
-                            truckIndex + 1,
-                            currentTrucks.length - truckIndex - 1
-                    );
-
-                return nextNextTrucks;
+                solutionFound(truckIndex, nextTrucks, targetPosition, newPositions);
+                return;
             }
         } else {
             byte elementToPick = getElementInMap(targetPosition, nextNextPickMap, level.pickSmallMapIndexes);
@@ -445,7 +371,7 @@ final class FullLevelState extends AbstractLevelState {
                     if (LOG) {
                         log(truckIndex, "Can't go there because we already have enough cargo");
                     }
-                    return null;
+                    return;
                 } else {
                     // pick the content since it OK
                     nextNextPickMap = nextPickMap.clone();
@@ -467,7 +393,7 @@ final class FullLevelState extends AbstractLevelState {
                         if (LOG) {
                             log(truckIndex, "Can't go there because we should unload a cargo and we don't have any");
                         }
-                        return null;
+                        return;
                     }
                     if (LOG) {
                         log(truckIndex, "Unload a " + MapElement.PACKAGE_TO_NAME.get(dumpedCargo) + " cargo because of a bump");
@@ -490,7 +416,7 @@ final class FullLevelState extends AbstractLevelState {
             if (LOG) {
                 log(truckIndex, "Road ahead is blocked");
             }
-            return null;
+            return;
         }
 
         if (LOG) {
@@ -567,7 +493,7 @@ final class FullLevelState extends AbstractLevelState {
 
         int nextNextNumberOfNotStoppedTrucks = addOneTruck(nextNumberOfNotStoppedTrucks, currentTruckType);
 
-        return endProcessTruck(
+        endProcessTruck(
                 truckIndex,
                 nextNextNumberOfUnprocessedPackages,
                 nextNextNumberOfNotStoppedTrucks,
@@ -582,7 +508,7 @@ final class FullLevelState extends AbstractLevelState {
                 nextNextForbiddenLocations);
     }
 
-    private @Nullable Truck[] processStoppedTruck(
+    private void processStoppedTruck(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
@@ -594,7 +520,7 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
             final int nextNumberOfUnprocessedPackages,
-            final int nextNumberOfNotStoppedTrucks) throws IOException {
+            final int nextNumberOfNotStoppedTrucks) {
         // already stopped, going on
 
         // check if not other truck on the same place
@@ -602,12 +528,12 @@ final class FullLevelState extends AbstractLevelState {
             if (LOG) {
                 log(truckIndex, "Truck " + truckIndex + " is stopped and there's another truck here");
             }
-            return null;
+            return;
         }
         if (LOG) {
             log(truckIndex, "Truck " + truckIndex + " is already stopped");
         }
-        return endProcessTruck(
+        endProcessTruck(
                 truckIndex,
                 nextNumberOfUnprocessedPackages,
                 nextNumberOfNotStoppedTrucks,
@@ -622,7 +548,7 @@ final class FullLevelState extends AbstractLevelState {
                 forbiddenLocations);
     }
 
-    private @Nullable Truck[] endProcessTruck(
+    private void endProcessTruck(
             final int truckIndex,
             final int nextNumberOfUnprocessedPackages,
             final int nextNumberOfNotStoppedTrucks,
@@ -634,7 +560,7 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
-            final @Nullable IntegerListElement forbiddenLocations) throws IOException {
+            final @Nullable IntegerListElement forbiddenLocations) {
         // Add truck to list
         Truck[] nextNextTrucks = nextTrucks.clone();
         nextNextTrucks[truckIndex] = newTruck;
@@ -645,38 +571,40 @@ final class FullLevelState extends AbstractLevelState {
                 if (LOG) {
                     log(truckIndex, "Not enough truck is driving");
                 }
-                return null;
             } else {
                 if (checkForbiddenLocations(nextTrucks, forbiddenLocations)) {
-                    if (LOG) {
-                        log(truckIndex, "Adding new level state to list");
+                    if (numberOfTurns < level.minimalNumberOfTurns) {
+                        if (LOG) {
+                            log(truckIndex, "Adding new level state to list");
+                        }
+
+                        level.states.add(new FullLevelState(
+                                level,
+                                numberOfTurns + 1,
+                                initialBumpMap,
+                                nextNumberOfUnprocessedPackages,
+                                nextRoadMap,
+                                nextPickMap,
+                                nextUnloadMap,
+                                nextBumpMap,
+                                nextNextTrucks,
+                                nextSwitchMap,
+                                nextSwitchState
+                        ));
                     }
-                    level.states.add(new FullLevelState(
-                            level,
-                            initialBumpMap,
-                            nextNumberOfUnprocessedPackages,
-                            nextRoadMap,
-                            nextPickMap,
-                            nextUnloadMap,
-                            nextBumpMap,
-                            nextNextTrucks,
-                            nextSwitchMap,
-                            nextSwitchState
-                    ));
                 } else {
                     if (LOG) {
                         log(truckIndex, "Truck is on a place it shouldn't be");
                     }
                 }
             }
-            return null;
         } else {
             // not last truck
             if (LOG) {
                 log(truckIndex + 1, "Processing truck number " + (truckIndex + 1));
             }
 
-            return processTruck(
+            processTruck(
                     truckIndex + 1,
                     nextNextTrucks,
                     nextNumberOfUnprocessedPackages,

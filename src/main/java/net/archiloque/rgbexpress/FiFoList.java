@@ -3,34 +3,22 @@ package net.archiloque.rgbexpress;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final class LinkedList<E> {
+final class FiFoList<E> {
 
     private @Nullable ListElement<E> current;
 
-    private @Nullable ListElement<E> last;
-
-    LinkedList() {
+    FiFoList() {
     }
 
     void add(@NotNull E element) {
-        ListElement<E> newLast = new ListElement<>(element);
-        if (last != null) {
-            last.next = newLast;
-        }
-        if (current == null) {
-            current = newLast;
-        }
-        last = newLast;
+        current = new ListElement<>(element, current);
     }
 
     @Nullable E pop() {
         if (current != null) {
-            E currentElement = current.element;
+            E element = current.element;
             current = current.next;
-            if (current == null) {
-                last = null;
-            }
-            return currentElement;
+            return element;
         } else {
             return null;
         }
@@ -44,10 +32,11 @@ final class LinkedList<E> {
 
         private final @NotNull E element;
 
-        private @Nullable ListElement<E> next;
+        private final @Nullable ListElement<E> next;
 
-        ListElement(@NotNull E element) {
+        ListElement(@NotNull E element, @Nullable ListElement<E> next) {
             this.element = element;
+            this.next = next;
         }
     }
 

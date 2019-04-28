@@ -1,9 +1,7 @@
 package net.archiloque.rgbexpress;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 abstract class AbstractLevelState {
@@ -24,7 +22,65 @@ abstract class AbstractLevelState {
     private static final int YELLOW_ITEM_VALUE = 1 << MapElement.YELLOW_SHIFT;
     private static final int WHITE_ITEM_VALUE = RED_ITEM_VALUE + GREEN_ITEM_VALUE + BLUE_ITEM_VALUE + YELLOW_ITEM_VALUE;
 
-    abstract @Nullable Truck[] processState() throws IOException;
+    /**
+     * The current level
+     */
+    @NotNull
+    final Level level;
+
+    /**
+     * The number of turns
+     */
+    final int numberOfTurns;
+
+    /**
+     * Number of unprocessed packages per package type
+     */
+    final int previousNumberOfUnprocessedPackages;
+
+    /**
+     * Maps of the road as {@link RoadElement}
+     */
+    @NotNull
+    final byte[] previousRoadMaps;
+
+    /**
+     * Map of the packages to pick, designed by their package as {@link MapElement}
+     */
+    @NotNull
+    final byte[] previousPickMap;
+
+    /**
+     * Map of the warehouse drop points, designed by their package as {@link MapElement}
+     */
+    @NotNull
+    final byte[] previousUnloadMap;
+
+    /**
+     * Current trucks
+     */
+    @NotNull
+    final Truck[] currentTrucks;
+
+    AbstractLevelState(
+            final @NotNull Level level,
+            final int numberOfTurns,
+            final int previousNumberOfUnprocessedPackages,
+            final @NotNull byte[] previousRoadMaps,
+            final @NotNull byte[] previousPickMap,
+            final @NotNull byte[] previousUnloadMap,
+            final @NotNull Truck[] currentTrucks
+    ) {
+        this.level = level;
+        this.numberOfTurns = numberOfTurns;
+        this.previousNumberOfUnprocessedPackages = previousNumberOfUnprocessedPackages;
+        this.previousRoadMaps = previousRoadMaps;
+        this.previousUnloadMap = previousUnloadMap;
+        this.previousPickMap = previousPickMap;
+        this.currentTrucks = currentTrucks;
+    }
+
+    abstract void processState();
 
     final boolean anyTruckHere(final @NotNull Truck[] trucks, final int position) {
         for (Truck truck : trucks) {
@@ -128,6 +184,35 @@ abstract class AbstractLevelState {
             return false;
         }
         return true;
+    }
+
+    void solutionFound(int truckIndex, @NotNull Truck[] nextTrucks, short targetPosition, byte[] newPositions) {
+        // we found a solution !
+        if(numberOfTurns < level.minimalNumberOfTurns) {
+            Truck[] nextNextTrucks = nextTrucks.clone();
+
+            @NotNull Truck newTruck = new Truck(
+                    targetPosition,
+                    false,
+                    0,
+                    newPositions
+            );
+
+            nextNextTrucks[truckIndex] = newTruck;
+
+            if (currentTrucks.length != truckIndex)
+                System.arraycopy(
+                        currentTrucks,
+                        truckIndex + 1,
+                        nextNextTrucks,
+                        truckIndex + 1,
+                        currentTrucks.length - truckIndex - 1
+                );
+            level.minimalNumberOfTurns = numberOfTurns;
+            level.bestSolutionLevelState = this;
+            level.bestSolutionTrucks = nextNextTrucks;
+
+        }
     }
 
 }

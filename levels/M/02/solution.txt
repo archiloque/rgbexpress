@@ -44,9 +44,9 @@ Start at (9,0) (red truck)
  │  ↑  │ 
  ├──↑←←← 
  │  │  ↑ 
- ├─┬┴→→↑ 
- │ │ ↑ │ 
- ├─┼─↑←← 
+ ├─┬┴┬─↑ 
+ │ │ │ ↑ 
+ ├─┼─┼─↑ 
  │ │ │ ↑ 
 ╶┴─┴─┴─↑□
 
@@ -54,12 +54,8 @@ Start at (9,8) (green truck)
 ← (9,7) maybe pick a green package
 ↑ (8,7)
 ↑ (7,7)
-← (7,6)
-← (7,5) maybe bump a package or pick one
-↑ (6,5)
-↑ (5,5)
-→ (5,6)
-→ (5,7) maybe pick a red package
+↑ (6,7)
+↑ (5,7) maybe pick a red package
 ↑ (4,7)
 ↑ (3,7) maybe pick a green package
 ← (3,6)

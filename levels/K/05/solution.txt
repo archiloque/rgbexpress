@@ -1,5 +1,5 @@
            
-╶┬─→→→X┬─┬╴
+╶┬─→→→→X─┬╴
  │ ↑ │ │ │ 
  ├─↑←←─┼─┤ 
  │ │ ↑ │ │ 
@@ -25,6 +25,7 @@ Start at (8,1) (red truck)
 → (1,4) unload a red package
 → (1,5)
 → (1,6) unload a red package
+→ (1,7)
 
            
 ╶→X┬─┬─↓←←╴

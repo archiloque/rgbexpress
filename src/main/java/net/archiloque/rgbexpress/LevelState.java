@@ -87,7 +87,7 @@ final class LevelState extends AbstractLevelState {
             final @NotNull byte[] nextUnloadMap,
             final int nextNumberOfUnprocessedPackages,
             final int nextNumberOfNotStoppedTrucks) {
-        processNotSoppedTruckTryStopping(
+        processNotStoppedTruckTryStopping(
                 truckIndex,
                 currentTruck,
                 nextNumberOfUnprocessedPackages,
@@ -96,7 +96,7 @@ final class LevelState extends AbstractLevelState {
                 nextRoadMap,
                 nextPickMap,
                 nextUnloadMap);
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -108,7 +108,7 @@ final class LevelState extends AbstractLevelState {
                 Direction.DOWN,
                 level.width
         );
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -120,7 +120,7 @@ final class LevelState extends AbstractLevelState {
                 Direction.LEFT,
                 (short) -1
         );
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -132,7 +132,7 @@ final class LevelState extends AbstractLevelState {
                 Direction.RIGHT,
                 (short) +1
         );
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -146,7 +146,7 @@ final class LevelState extends AbstractLevelState {
         );
     }
 
-    private void processNotSoppedTruckTryStopping(
+    private void processNotStoppedTruckTryStopping(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final int nextNumberOfUnprocessedPackages,
@@ -189,7 +189,7 @@ final class LevelState extends AbstractLevelState {
         }
     }
 
-    private void processNotSoppedTruckTryGoing(
+    private void processNotStoppedTruckTryGoing(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,

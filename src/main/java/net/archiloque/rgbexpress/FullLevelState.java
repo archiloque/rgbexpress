@@ -113,7 +113,7 @@ final class FullLevelState extends AbstractLevelState {
                     nextNumberOfUnprocessedPackages,
                     nextNumberOfNotStoppedTrucks);
         } else {
-            processNotSoppedTruck(
+            processNotStoppedTruck(
                     truckIndex,
                     currentTruck,
                     nextTrucks,
@@ -129,7 +129,7 @@ final class FullLevelState extends AbstractLevelState {
         }
     }
 
-    private void processNotSoppedTruck(
+    private void processNotStoppedTruck(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
@@ -142,7 +142,7 @@ final class FullLevelState extends AbstractLevelState {
             final @Nullable IntegerListElement forbiddenLocations,
             final int nextNumberOfUnprocessedPackages,
             final int nextNumberOfNotStoppedTrucks) {
-        processNotSoppedTruckTryStopping(
+        processNotStoppedTruckTryStopping(
                 truckIndex,
                 currentTruck,
                 nextNumberOfUnprocessedPackages,
@@ -155,7 +155,7 @@ final class FullLevelState extends AbstractLevelState {
                 nextSwitchMap,
                 nextSwitchState,
                 forbiddenLocations);
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -171,7 +171,7 @@ final class FullLevelState extends AbstractLevelState {
                 Direction.DOWN,
                 level.width
         );
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -187,7 +187,7 @@ final class FullLevelState extends AbstractLevelState {
                 Direction.LEFT,
                 (short) -1
         );
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -203,7 +203,7 @@ final class FullLevelState extends AbstractLevelState {
                 Direction.RIGHT,
                 (short) +1
         );
-        processNotSoppedTruckTryGoing(
+        processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
                 nextTrucks,
@@ -221,7 +221,7 @@ final class FullLevelState extends AbstractLevelState {
         );
     }
 
-    private void processNotSoppedTruckTryStopping(
+    private void processNotStoppedTruckTryStopping(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final int nextNumberOfUnprocessedPackages,
@@ -242,8 +242,8 @@ final class FullLevelState extends AbstractLevelState {
         if (
                 (!anyTruckHere(nextTrucks, currentPosition)) &&
                         (currentTruck.cargo == 0)) {
-            if(LOG) {
-                log(truckIndex,"Can stop");
+            if (LOG) {
+                log(truckIndex, "Can stop");
             }
             Truck newTruck = new Truck(
                     currentPosition,
@@ -265,13 +265,13 @@ final class FullLevelState extends AbstractLevelState {
                     nextSwitchState,
                     forbiddenLocations);
         } else {
-            if(LOG) {
+            if (LOG) {
                 log(truckIndex, "Can't stop because there's packages to deliver");
             }
         }
     }
 
-    private void processNotSoppedTruckTryGoing(
+    private void processNotStoppedTruckTryGoing(
             final int truckIndex,
             final @NotNull Truck currentTruck,
             final @NotNull Truck[] nextTrucks,
@@ -447,16 +447,24 @@ final class FullLevelState extends AbstractLevelState {
             }
             Level.SwitchGroup switchGroup = level.switchGroups[switchId];
 
+            // switch roads
             for (short roadToSwitchPosition : switchGroup.roads) {
-                nextNextForbiddenLocations = new IntegerListElement(roadToSwitchPosition, nextNextForbiddenLocations);
                 int currentRoadAtPosition = getElementInMap(roadToSwitchPosition, nextNextRoads, level.roadsSmallMapIndexes);
                 byte switchedRoad = RoadElement.SWITCHED_ELEMENT[currentRoadAtPosition];
+
                 if (switchedRoad == RoadElement.ERROR) {
                     woops(level, roadToSwitchPosition);
                 }
+
+                // forbid the location if it is now blocked
+                if (RoadElement.BLOCKED_ROAD[switchedRoad]) {
+                    nextNextForbiddenLocations = new IntegerListElement(roadToSwitchPosition, nextNextForbiddenLocations);
+                }
+
                 nextNextRoads[level.roadsSmallMapIndexes[roadToSwitchPosition]] = switchedRoad;
             }
 
+            // forbid to be on switched roads
             for (short disabledSwitch : switchGroup.disabledSwitches) {
                 if (disabledSwitch != currentPosition) {
                     nextNextForbiddenLocations = new IntegerListElement(disabledSwitch, nextNextForbiddenLocations);
@@ -467,15 +475,18 @@ final class FullLevelState extends AbstractLevelState {
                     nextNextForbiddenLocations = new IntegerListElement(enabledSwitch, nextNextForbiddenLocations);
                 }
             }
+
             boolean currentSwitchStatus = nextNextSwitchState[switchId];
 
             nextNextSwitchMap = nextNextSwitchMap.clone();
             short[] switchesToEnable = currentSwitchStatus ? switchGroup.disabledSwitches : switchGroup.enabledSwitches;
             short[] switchesToDisable = currentSwitchStatus ? switchGroup.enabledSwitches : switchGroup.disabledSwitches;
 
+            // enable the currently disabled switches
             for (short switchPosition : switchesToEnable) {
                 nextNextSwitchMap[switchPosition] = switchId;
             }
+            // disable the currently enabled switches
             for (short switchPosition : switchesToDisable) {
                 nextNextSwitchMap[switchPosition] = -1;
             }

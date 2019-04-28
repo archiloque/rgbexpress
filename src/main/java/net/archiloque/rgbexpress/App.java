@@ -44,11 +44,11 @@ public final class App {
         long startTime = System.nanoTime();
         level.createInitStates();
         level.solve();
-            if (level.bestSolutionLevelState != null) {
-                long stopTime = System.nanoTime();
-                print(path, "Solved in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString(), false);
-                printSolution(solutionFile, level, level.bestSolutionLevelState, level.bestSolutionTrucks);
-            } else {
+        if (level.bestSolutionLevelState != null) {
+            long stopTime = System.nanoTime();
+            print(path, "Solved in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString(), false);
+            printSolution(solutionFile, level, level.bestSolutionLevelState, level.bestSolutionTrucks);
+        } else {
             long stopTime = System.nanoTime();
             print(path, "Failed in " + LocalTime.MIN.plusNanos((stopTime - startTime)).toString(), true);
         }

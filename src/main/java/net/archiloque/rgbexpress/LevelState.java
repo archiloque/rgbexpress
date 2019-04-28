@@ -164,7 +164,7 @@ final class LevelState extends AbstractLevelState {
                 (!anyTruckHere(nextTrucks, currentPosition)) &&
                         (currentTruck.cargo == 0)) {
             if (LOG) {
-                log(truckIndex,"Can stop");
+                log(truckIndex, "Can stop");
             }
             Truck newTruck = new Truck(
                     currentPosition,
@@ -183,7 +183,7 @@ final class LevelState extends AbstractLevelState {
                     nextUnloadMap
             );
         } else {
-            if(LOG) {
+            if (LOG) {
                 log(truckIndex, "Can't stop because there's packages to deliver");
             }
         }
@@ -394,7 +394,7 @@ final class LevelState extends AbstractLevelState {
                     log(truckIndex, "Not enough truck is driving");
                 }
             } else {
-                if(numberOfTurns < level.minimalNumberOfTurns) {
+                if (numberOfTurns < level.minimalNumberOfTurns) {
                     if (LOG) {
                         log(truckIndex, "Adding new level state to list");
                     }

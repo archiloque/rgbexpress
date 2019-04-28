@@ -188,7 +188,7 @@ abstract class AbstractLevelState {
 
     void solutionFound(int truckIndex, @NotNull Truck[] nextTrucks, short targetPosition, byte[] newPositions) {
         // we found a solution !
-        if(numberOfTurns < level.minimalNumberOfTurns) {
+        if (numberOfTurns < level.minimalNumberOfTurns) {
             Truck[] nextNextTrucks = nextTrucks.clone();
 
             @NotNull Truck newTruck = new Truck(

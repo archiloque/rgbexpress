@@ -313,8 +313,8 @@ final class Level {
         }
     }
 
-    boolean solve(){
-        while(! states.isEmpty()) {
+    boolean solve() {
+        while (!states.isEmpty()) {
             states.pop().processState();
         }
 

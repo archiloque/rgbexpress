@@ -1,6 +1,6 @@
 # RGB Express
 
-A solver for the game RGB Express.
+A solver for the game [RGB Express](http://rgbexpress.com).
 
 Not all levels are available since typing them taks some time, if you want to contribute some levels you're welcome.
 

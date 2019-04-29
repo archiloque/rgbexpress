@@ -281,11 +281,11 @@ final class RoadElement {
                     ERROR,// LEFT_RIGHT_DOWN
 
                     ERROR,// LEFT_RIGHT_BLOCKED
-                    ERROR,// UP_DOWN_BLOCKED
+                    DOWN_BLOCKED,// UP_DOWN_BLOCKED
 
                     ERROR,// LEFT_BLOCKED
                     ERROR,// RIGHT_BLOCKED
-                    ERROR,// UP_BLOCKED
+                    EMPTY,// UP_BLOCKED
                     ERROR,// DOWN_BLOCKED
 
             },
@@ -314,12 +314,12 @@ final class RoadElement {
                     LEFT_RIGHT,// LEFT_RIGHT_DOWN
 
                     ERROR,// LEFT_RIGHT_BLOCKED
-                    ERROR,// UP_DOWN_BLOCKED
+                    UP_BLOCKED,// UP_DOWN_BLOCKED
 
                     ERROR,// LEFT_BLOCKED
                     ERROR,// RIGHT_BLOCKED
                     ERROR,// UP_BLOCKED
-                    ERROR,// DOWN_BLOCKED
+                    EMPTY,// DOWN_BLOCKED
             },
             // LEFT
             {
@@ -345,11 +345,11 @@ final class RoadElement {
                     RIGHT_UP,// LEFT_RIGHT_UP
                     RIGHT_DOWN,// LEFT_RIGHT_DOWN
 
-                    ERROR,// LEFT_RIGHT_BLOCKED
+                    RIGHT_BLOCKED,// LEFT_RIGHT_BLOCKED
                     ERROR,// UP_DOWN_BLOCKED
 
                     ERROR,// LEFT_BLOCKED
-                    ERROR,// RIGHT_BLOCKED
+                    EMPTY,// RIGHT_BLOCKED
                     ERROR,// UP_BLOCKED
                     ERROR,// DOWN_BLOCKED
             },
@@ -377,11 +377,11 @@ final class RoadElement {
                     LEFT_UP,// LEFT_RIGHT_UP
                     LEFT_DOWN,// LEFT_RIGHT_DOWN
 
-                    ERROR,// LEFT_RIGHT_BLOCKED
+                    LEFT_BLOCKED,// LEFT_RIGHT_BLOCKED
                     ERROR,// UP_DOWN_BLOCKED
 
                     ERROR,// LEFT_BLOCKED
-                    ERROR,// RIGHT_BLOCKED
+                    EMPTY,// RIGHT_BLOCKED
                     ERROR,// UP_BLOCKED
                     ERROR,// DOWN_BLOCKED
             },

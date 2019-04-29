@@ -186,31 +186,13 @@ abstract class AbstractLevelState {
         return true;
     }
 
-    void solutionFound(int truckIndex, @NotNull Truck[] nextTrucks, short targetPosition, byte[] newPositions) {
+    void solutionFound(@NotNull Truck[] trucks) {
         // we found a solution !
         if (numberOfTurns < level.minimalNumberOfTurns) {
-            Truck[] nextNextTrucks = nextTrucks.clone();
 
-            @NotNull Truck newTruck = new Truck(
-                    targetPosition,
-                    false,
-                    0,
-                    newPositions
-            );
-
-            nextNextTrucks[truckIndex] = newTruck;
-
-            if (currentTrucks.length != truckIndex)
-                System.arraycopy(
-                        currentTrucks,
-                        truckIndex + 1,
-                        nextNextTrucks,
-                        truckIndex + 1,
-                        currentTrucks.length - truckIndex - 1
-                );
             level.minimalNumberOfTurns = numberOfTurns;
             level.bestSolutionLevelState = this;
-            level.bestSolutionTrucks = nextNextTrucks;
+            level.bestSolutionTrucks = trucks;
 
         }
     }

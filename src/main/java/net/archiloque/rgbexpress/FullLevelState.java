@@ -79,7 +79,9 @@ final class FullLevelState extends AbstractLevelState {
                 previousBumpMap,
                 previousSwitchMap,
                 previousSwitchState,
-                null);
+                null,
+                false,
+                false);
     }
 
     /**
@@ -96,7 +98,9 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
-            final @Nullable IntegerListElement forbiddenLocations) {
+            final @Nullable IntegerListElement forbiddenLocations,
+            final boolean clickedOnSwitchCurrentMove,
+            final boolean crossedBlockedRoadNextMove) {
         Truck currentTruck = currentTrucks[truckIndex];
         if (currentTruck.stopped) {
             processStoppedTruck(
@@ -111,7 +115,9 @@ final class FullLevelState extends AbstractLevelState {
                     nextSwitchState,
                     forbiddenLocations,
                     nextNumberOfUnprocessedPackages,
-                    nextNumberOfNotStoppedTrucks);
+                    nextNumberOfNotStoppedTrucks,
+                    clickedOnSwitchCurrentMove,
+                    crossedBlockedRoadNextMove);
         } else {
             processNotStoppedTruck(
                     truckIndex,
@@ -125,7 +131,9 @@ final class FullLevelState extends AbstractLevelState {
                     nextSwitchState,
                     forbiddenLocations,
                     nextNumberOfUnprocessedPackages,
-                    nextNumberOfNotStoppedTrucks);
+                    nextNumberOfNotStoppedTrucks,
+                    clickedOnSwitchCurrentMove,
+                    crossedBlockedRoadNextMove);
         }
     }
 
@@ -141,7 +149,9 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
             final int nextNumberOfUnprocessedPackages,
-            final int nextNumberOfNotStoppedTrucks) {
+            final int nextNumberOfNotStoppedTrucks,
+            final boolean clickedOnSwitchCurrentMove,
+            final boolean crossedBlockedRoadNextMove) {
         processNotStoppedTruckTryStopping(
                 truckIndex,
                 currentTruck,
@@ -154,7 +164,9 @@ final class FullLevelState extends AbstractLevelState {
                 nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
-                forbiddenLocations);
+                forbiddenLocations,
+                clickedOnSwitchCurrentMove,
+                crossedBlockedRoadNextMove);
         processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
@@ -169,8 +181,9 @@ final class FullLevelState extends AbstractLevelState {
                 nextSwitchState,
                 forbiddenLocations,
                 Direction.DOWN,
-                level.width
-        );
+                level.width,
+                clickedOnSwitchCurrentMove,
+                crossedBlockedRoadNextMove);
         processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
@@ -185,8 +198,9 @@ final class FullLevelState extends AbstractLevelState {
                 nextSwitchState,
                 forbiddenLocations,
                 Direction.LEFT,
-                (short) -1
-        );
+                (short) -1,
+                clickedOnSwitchCurrentMove,
+                crossedBlockedRoadNextMove);
         processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
@@ -201,8 +215,9 @@ final class FullLevelState extends AbstractLevelState {
                 nextSwitchState,
                 forbiddenLocations,
                 Direction.RIGHT,
-                (short) +1
-        );
+                (short) +1,
+                clickedOnSwitchCurrentMove,
+                crossedBlockedRoadNextMove);
         processNotStoppedTruckTryGoing(
                 truckIndex,
                 currentTruck,
@@ -217,8 +232,9 @@ final class FullLevelState extends AbstractLevelState {
                 nextSwitchState,
                 forbiddenLocations,
                 Direction.UP,
-                (short) -level.width
-        );
+                (short) -level.width,
+                clickedOnSwitchCurrentMove,
+                crossedBlockedRoadNextMove);
     }
 
     private void processNotStoppedTruckTryStopping(
@@ -233,7 +249,9 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
-            final @Nullable IntegerListElement forbiddenLocations) {
+            final @Nullable IntegerListElement forbiddenLocations,
+            final boolean clickedOnSwitchCurrentMove,
+            final boolean crossedBlockedRoadNextMove) {
         short currentPosition = currentTruck.currentPosition;
         if (LOG) {
             log(truckIndex, "Truck " + truckIndex + " " + MapElement.TRUCK_TO_NAME.get(level.trucksTypes[truckIndex]) + " at (" + (currentPosition / level.width) + ", " + (currentPosition % level.width) + ") and want to stop");
@@ -263,7 +281,9 @@ final class FullLevelState extends AbstractLevelState {
                     nextBumpMap,
                     nextSwitchMap,
                     nextSwitchState,
-                    forbiddenLocations);
+                    forbiddenLocations,
+                    clickedOnSwitchCurrentMove,
+                    crossedBlockedRoadNextMove);
         } else {
             if (LOG) {
                 log(truckIndex, "Can't stop because there's packages to deliver");
@@ -285,10 +305,16 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement nextForbiddenLocations,
             final int direction,
-            final short deltaPosition) {
+            final short deltaPosition,
+            final boolean clickedOnSwitchCurrentMove,
+            final boolean crossedBlockedRoadNextMove) {
         short currentPosition = currentTruck.currentPosition;
         byte currentRoad = getElementInMap(currentPosition, nextRoadMap, level.roadsSmallMapIndexes);
         byte currentTruckType = level.trucksTypes[truckIndex];
+
+        boolean newClickedOnSwitchCurrentMove = clickedOnSwitchCurrentMove;
+        boolean newCrossedBlockedRoadNextMove = crossedBlockedRoadNextMove;
+
         if (LOG) {
             log(truckIndex, "Truck " + truckIndex + " " + MapElement.TRUCK_TO_NAME.get(currentTruckType) + " at (" + (currentPosition / level.width) + ", " + (currentPosition % level.width) + ") and want to go " + Direction.AS_CHAR[direction] + " with road being [" + RoadElement.BYTE_TO_CHAR.get(currentRoad) + "]");
         }
@@ -357,12 +383,6 @@ final class FullLevelState extends AbstractLevelState {
 
             newCargo = unloadPackage(newCargo);
             nextNextNumberOfUnprocessedPackages = removeOnePackage(nextNextNumberOfUnprocessedPackages, lastPackage);
-
-            if (nextNextNumberOfUnprocessedPackages == 0) {
-                // we found a solution !
-                solutionFound(truckIndex, nextTrucks, targetPosition, newPositions);
-                return;
-            }
         } else {
             byte elementToPick = getElementInMap(targetPosition, nextNextPickMap, level.pickSmallMapIndexes);
             if (elementToPick != MapElement.EMPTY) {
@@ -414,9 +434,9 @@ final class FullLevelState extends AbstractLevelState {
         byte targetRoad = getElementInMap(targetPosition, nextRoadMap, level.roadsSmallMapIndexes);
         if (RoadElement.BLOCKED_ROAD[targetRoad]) {
             if (LOG) {
-                log(truckIndex, "Road ahead is blocked");
+                log(truckIndex, "Road ahead is blocked but still trying");
             }
-            return;
+            newCrossedBlockedRoadNextMove = true;
         }
 
         if (LOG) {
@@ -442,6 +462,7 @@ final class FullLevelState extends AbstractLevelState {
 
         byte switchId = nextNextSwitchMap[currentPosition];
         if (switchId != -1) {
+            newClickedOnSwitchCurrentMove = true;
             if (LOG) {
                 log(truckIndex, "On a switch");
             }
@@ -516,7 +537,9 @@ final class FullLevelState extends AbstractLevelState {
                 nextNextBumpMap,
                 nextNextSwitchMap,
                 nextSwitchState,
-                nextNextForbiddenLocations);
+                nextNextForbiddenLocations,
+                newClickedOnSwitchCurrentMove,
+                newCrossedBlockedRoadNextMove);
     }
 
     private void processStoppedTruck(
@@ -531,7 +554,9 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextSwitchState,
             final @Nullable IntegerListElement forbiddenLocations,
             final int nextNumberOfUnprocessedPackages,
-            final int nextNumberOfNotStoppedTrucks) {
+            final int nextNumberOfNotStoppedTrucks,
+            final boolean clickedOnSwitchCurrentMove,
+            final boolean crossedBlockedRoadNextMove) {
         // already stopped, going on
 
         // check if not other truck on the same place
@@ -556,7 +581,9 @@ final class FullLevelState extends AbstractLevelState {
                 nextBumpMap,
                 nextSwitchMap,
                 nextSwitchState,
-                forbiddenLocations);
+                forbiddenLocations,
+                clickedOnSwitchCurrentMove,
+                crossedBlockedRoadNextMove);
     }
 
     private void endProcessTruck(
@@ -571,13 +598,25 @@ final class FullLevelState extends AbstractLevelState {
             final @NotNull boolean[] nextBumpMap,
             final @NotNull byte[] nextSwitchMap,
             final @NotNull boolean[] nextSwitchState,
-            final @Nullable IntegerListElement forbiddenLocations) {
+            final @Nullable IntegerListElement forbiddenLocations,
+            final boolean clickedOnSwitchCurrentMove,
+            final boolean crossedBlockedRoadNextMove) {
         // Add truck to list
         Truck[] nextNextTrucks = nextTrucks.clone();
         nextNextTrucks[truckIndex] = newTruck;
 
         if (truckIndex == (level.numberOfTrucks - 1)) {
+            if (crossedBlockedRoadNextMove && (!clickedOnSwitchCurrentMove)) {
+                return;
+            }
+
             // last truck
+            if (nextNumberOfUnprocessedPackages == 0) {
+                // we found a solution !
+                solutionFound(nextNextTrucks);
+                return;
+            }
+
             if (!enoughTrucksForPackages(nextNumberOfNotStoppedTrucks, nextNumberOfUnprocessedPackages)) {
                 if (LOG) {
                     log(truckIndex, "Not enough truck is driving");
@@ -626,7 +665,9 @@ final class FullLevelState extends AbstractLevelState {
                     nextBumpMap,
                     nextSwitchMap,
                     nextSwitchState,
-                    forbiddenLocations);
+                    forbiddenLocations,
+                    clickedOnSwitchCurrentMove,
+                    crossedBlockedRoadNextMove);
         }
     }
 

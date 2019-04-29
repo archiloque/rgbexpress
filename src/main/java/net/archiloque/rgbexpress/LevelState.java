@@ -270,11 +270,6 @@ final class LevelState extends AbstractLevelState {
 
             newCargo = unloadPackage(newCargo);
             nextNextNumberOfUnprocessedPackages = removeOnePackage(nextNextNumberOfUnprocessedPackages, lastPackage);
-
-            if (nextNextNumberOfUnprocessedPackages == 0) {
-                solutionFound(truckIndex, nextTrucks, targetPosition, newPositions);
-                return;
-            }
         } else {
             byte elementToPick = getElementInMap(targetPosition, nextNextPickMap, level.pickSmallMapIndexes);
             if (elementToPick != MapElement.EMPTY) {
@@ -389,6 +384,11 @@ final class LevelState extends AbstractLevelState {
 
         if (truckIndex == (level.numberOfTrucks - 1)) {
             // last truck
+            if (nextNumberOfUnprocessedPackages == 0) {
+                solutionFound(nextNextTrucks);
+                return;
+            }
+
             if (!enoughTrucksForPackages(nextNumberOfNotStoppedTrucks, nextNumberOfUnprocessedPackages)) {
                 if (LOG) {
                     log(truckIndex, "Not enough truck is driving");

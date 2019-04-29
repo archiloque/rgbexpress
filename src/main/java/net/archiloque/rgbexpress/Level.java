@@ -1,6 +1,7 @@
 package net.archiloque.rgbexpress;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,9 +14,9 @@ final class Level {
 
     int minimalNumberOfTurns = Integer.MAX_VALUE;
 
-    AbstractLevelState bestSolutionLevelState;
+    @Nullable AbstractLevelState bestSolutionLevelState;
 
-    Truck[] bestSolutionTrucks;
+    @Nullable Truck[] bestSolutionTrucks;
 
     private final byte height;
 
